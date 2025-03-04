@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomApplication xmlns="http://soap.sforce.com/2006/04/metadata">
+    <brand>
+        <headerColor>#FDB203</headerColor>
+        <logo>app_icon</logo>
+        <logoVersion>1</logoVersion>
+        <shouldOverrideOrgTheme>true</shouldOverrideOrgTheme>
+    </brand>
+    <description>Automated review of various types of records, assessment of completion, generation of individual and summary process review documents.</description>
+    <formFactors>Small</formFactors>
+    <formFactors>Large</formFactors>
+    <isNavAutoTempTabsDisabled>true</isNavAutoTempTabsDisabled>
+    <isNavPersonalizationDisabled>true</isNavPersonalizationDisabled>
+    <isNavTabPersistenceDisabled>false</isNavTabPersistenceDisabled>
+    <isOmniPinnedViewEnabled>false</isOmniPinnedViewEnabled>
+    <label>Find the Guilty</label>
+    <navType>Standard</navType>
+    <tabs>Find_The_Quilty_Admin</tabs>
+    <tabs>ReviewProcess__c</tabs>
+    <tabs>ReviewFeedback__c</tabs>
+    <uiType>Lightning</uiType>
+    <utilityBar>Find_the_Guilty_UtilityBar</utilityBar>
+</CustomApplication>
