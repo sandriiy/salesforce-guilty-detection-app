@@ -1,0 +1,22 @@
+:host .slds-form-element__help,
+:host .slds-form-element__helper {
+    margin-top: 0 !important;
+}
+
+.easy-wrappable-text {
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+.select-object-combobox {
+    width: 100%;
+}
+
+.filter-indexbox {
+    background: #b0c4df;
+    color: #FFFFFF;
+    font-size: 12px;
+    border-radius: 4px;
+    z-index: 10;
+}

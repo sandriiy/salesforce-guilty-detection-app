@@ -1,0 +1,65 @@
+<template>
+    <div class="slds-grid slds-wrap">
+        <div class="slds-grid slds-wrap full-width"> 
+            <!-- Back Button on the left -->
+            <div class="slds-col slds-size_6-of-12">
+                <lightning-button
+                    label="Back">
+                </lightning-button>
+            </div>
+        
+            <!-- Save Button on the right -->
+            <div class="slds-col slds-size_6-of-12 slds-text-align_right">
+                <lightning-button
+                    label="Save"
+                    variant="brand">
+                </lightning-button>
+            </div>
+        
+            <!-- Text Row Centered -->
+            <div class="slds-col slds-size_12-of-12 slds-text-align_center slds-m-top_medium">
+                <p class="easy-wrappable-text slds-text-title">Use the interface below to specify the fields that need to be reviewed. Each field can include instructional help text visible only to the reviewer.</p>
+            </div>
+        </div>
+        <div class="slds-col slds-size_12-of-12">
+            <div for:each={selectedFields} for:item="selectedField" for:index="index" key={selectedField.field} data-index={index}>
+                <div class="slds-grid slds-wrap slds-grid_align-center slds-m-top_small slds-card slds-card_boundary slds-p-around_small">
+                    <div class="slds-size_1-of-1 slds-grid slds-gutters slds-nowrap">
+                        <div class="slds-col slds-size_1-of-3">
+                            <lightning-combobox
+                                label="Field Name"
+                                value={selectedField.field}
+                                options={fieldOptions}
+                                onchange={handleFilterFieldChange}>
+                            </lightning-combobox>
+                        </div>
+                        <div class="slds-col" style="width: 100%;">
+                            <lightning-input
+                                label="Additional Instructions"
+                                type="text"
+                                value={selectedField.helptext}>
+                            </lightning-input>
+                        </div>
+                    </div>
+                    <div class="slds-grid slds-size_1-of-1 slds-gutters slds-grid_align-end slds-m-top_medium">
+                        <lightning-button 
+                            variant="destructive-text" 
+                            label="Remove"
+                            title="Remove This Field" 
+                            onclick={handleClick} 
+                            class="slds-col">
+                        </lightning-button>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-grid slds-grid_vertical-align-end slds-m-top_large">
+                <div>
+                    <lightning-button
+                        label="Add Field"
+                        onclick={handleAddFilter}>
+                    </lightning-button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

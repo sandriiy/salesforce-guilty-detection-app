@@ -15,7 +15,7 @@
     <isOmniPinnedViewEnabled>false</isOmniPinnedViewEnabled>
     <label>Find the Guilty</label>
     <navType>Standard</navType>
-    <tabs>Find_The_Quilty_Admin</tabs>
+    <tabs>Find_The_Guilty_Admin</tabs>
     <tabs>ReviewProcess__c</tabs>
     <tabs>ReviewFeedback__c</tabs>
     <uiType>Lightning</uiType>
