@@ -4,6 +4,7 @@ import getSobjectFields from '@salesforce/apex/ReviewProcessController.getAllSOb
 
 export default class ReviewProcessFieldPicker extends LightningElement {
     @api record;
+    @api stepKey;
 
     reviewObjectFields;
     @track fieldOptions = [

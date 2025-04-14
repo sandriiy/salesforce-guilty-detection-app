@@ -16,7 +16,7 @@
             </lightning-progress-indicator>
         </div>
         <div class="slds-col slds-size_12-of-12 slds-m-top_large progress-step-container">
-            <lwc:component record={recordId} lwc:is={processComponentConstructor}></lwc:component>
+            <lwc:component onstepsave={handleStepSave} step-key={currentStepKey} record={record} lwc:is={processComponentConstructor}></lwc:component>
         </div>
     </div>
 </template>

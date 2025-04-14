@@ -1,5 +1,20 @@
 public class ReviewProcessController {
     @AuraEnabled
+    public static void saveReviewProcessFilter(Id reviewProcessId, String compiledData) {
+        ReviewProcess__c reviewProcess = new ReviewProcess__c(
+            Id = reviewProcessId,
+            FilterCriteria__c = compiledData
+        );
+
+        try {
+            update reviewProcess;
+        } catch (DMLException ex) {
+            // log
+            System.debug(ex.getMessage());
+        }
+    }
+
+    @AuraEnabled
     public static List<EntityDefinition> getSObjectsBySearch(String searchQuery) {
         return [
             SELECT Label, QualifiedApiName 

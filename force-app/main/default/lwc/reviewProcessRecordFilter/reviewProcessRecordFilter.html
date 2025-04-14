@@ -26,7 +26,7 @@
                     <p class="easy-wrappable-text slds-text-title">Use the filtering interface below to select the records for review. At least one filter must be set.</p>
                 </div>
             </div>
-            <div for:each={filters} for:item="filter" for:index="index" key={filter.field} data-index={index}>
+            <div for:each={filters} for:item="filter" for:index="index" key={filter.id} data-index={index}>
                 <div class="slds-grid slds-wrap slds-grid_align-center slds-m-vertical_medium slds-card slds-card_boundary slds-p-around_small">
                     <div class="slds-size_1-of-1 slds-grid slds-gutters slds-nowrap">
                         <div class="slds-col slds-size_1-of-3">
@@ -95,10 +95,14 @@
                     </lightning-button>
                 </div>
                 <div class="slds-col_bump-left">
-                    <lightning-input 
+                    <lightning-input
+                        lwc:ref="filterLogic"
                         type="text" 
                         label="Filter Logic" 
                         field-level-help="Filter logic governs how and when filters apply to your review records. Use AND and OR operators to fine-tune your results."
+                        value={filterLogic}
+                        onblur={handleFilterLogicValidation}
+                        onchange={handleFilterLogicChange}
                         class="slds-m-top_none">
                     </lightning-input>
                 </div>
