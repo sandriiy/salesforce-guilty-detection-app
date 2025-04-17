@@ -1,5 +1,7 @@
 <template>
-    <div class="slds-grid slds-wrap" style="position: relative;">
+    <div class="slds-grid slds-wrap">
+        <lightning-spinner lwc:if={isLoading} alternative-text="Loading..." size="small"></lightning-spinner>
+
         <div class="slds-grid slds-nowrap slds-size_12-of-12 slds-grid_vertical-align-end">
             <c-combobox 
                 data-id="selectobject" 
@@ -58,6 +60,7 @@
                             <lightning-record-picker
                                 lwc:elseif={filter.isLookup}
                                 label="Value"
+                                value={filter.value}
                                 object-api-name={filter.lookupTo}
                                 onchange={handleFieldValueChange}
                                 disabled={filter.isDisabledValue}>

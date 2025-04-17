@@ -15,6 +15,21 @@ public class ReviewProcessController {
     }
 
     @AuraEnabled
+    public static void saveReviewProcessFields(Id reviewProcessId, String compiledData) {
+        ReviewProcess__c reviewProcess = new ReviewProcess__c(
+            Id = reviewProcessId,
+            FieldsForReview__c = compiledData
+        );
+
+        try {
+            update reviewProcess;
+        } catch (DMLException ex) {
+            // log
+            System.debug(ex.getMessage());
+        }
+    }
+
+    @AuraEnabled
     public static List<EntityDefinition> getSObjectsBySearch(String searchQuery) {
         return [
             SELECT Label, QualifiedApiName 
@@ -72,8 +87,12 @@ public class ReviewProcessController {
         if (fieldDescribe.getType() == Schema.DisplayType.REFERENCE) {
             List<Schema.SObjectType> referenceTo = fieldDescribe.getReferenceTo();
             if (!referenceTo.isEmpty()) {
-                return referenceTo[0].getDescribe().getName(); // Extracting object name
+                // Extracting object name
+                return referenceTo[0].getDescribe().getName();
             }
+        } else if (fieldDescribe.getName() == 'Id') {
+            // The Id field always refers to the object itself
+            return fieldDescribe.getSObjectField().getDescribe().getSObjectType().getDescribe().getName();
         }
 
         return null;

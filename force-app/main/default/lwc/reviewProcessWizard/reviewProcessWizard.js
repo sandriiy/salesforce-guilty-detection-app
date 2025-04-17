@@ -3,11 +3,14 @@ import { getRecord } from "lightning/uiRecordApi";
 import { showToast, isEmpty } from 'c/utils';
 
 import saveReviewProcessFilter from '@salesforce/apex/ReviewProcessController.saveReviewProcessFilter';
+import saveReviewProcessFields from '@salesforce/apex/ReviewProcessController.saveReviewProcessFields';
 
 import REVIEW_ID from '@salesforce/schema/ReviewProcess__c.Id';
 import FILTER_CRITERIA from "@salesforce/schema/ReviewProcess__c.FilterCriteria__c";
 import REVIEW_FIELDS from "@salesforce/schema/ReviewProcess__c.FieldsForReview__c";
 import REVIEW_STATUS from "@salesforce/schema/ReviewProcess__c.Status__c";
+
+import { refreshApex } from '@salesforce/apex';
 
 const REVIEW_PROCESS_INDICATOR_STEPS = [
     {
@@ -35,8 +38,12 @@ export default class ReviewProcessWizard extends LightningElement {
     currentStep;
     currentStepKey;
 
-    @wire(getRecord, { recordId: "$recordId", fields: [REVIEW_ID, FILTER_CRITERIA, REVIEW_FIELDS, REVIEW_STATUS] })
-    wiredRecord({ error, data }) {
+    wiredRecordResult;
+    @wire(getRecord, { recordId: '$recordId', fields: [REVIEW_ID, FILTER_CRITERIA, REVIEW_FIELDS, REVIEW_STATUS] })
+    wiredRecord(result) {
+        this.wiredRecordResult = result;
+
+        const {data, error} = result;
         if (data) {
             this.record = data;
             this.determineReviewProgressStep();
@@ -61,20 +68,27 @@ export default class ReviewProcessWizard extends LightningElement {
         }
     }
 
+    async handleStepBack(event) {
+        const currentIndex = this.reviewSteps.findIndex(step => step.key === this.currentStepKey);
+        if (currentIndex > 0) {
+            this.isManualLoading = true;
+            const previousStep = this.reviewSteps[currentIndex - 1];
+            this.loadComponent(previousStep);
+            this.currentStep = previousStep.value;
+            this.currentStepKey = previousStep.key;
+            this.isManualLoading = false;
+        }
+    }
+
     async handleStepSave(event) {
         const receivedData = event.detail;
         if (!isEmpty(receivedData)) {
             this.isManualLoading = true;
 
-            let isSuccessful = false;
             if (this.currentStepKey === 'noFilterCriteria') {
-                isSuccessful = await this.saveRecordFilterStepData(receivedData);
+                await this.saveRecordFilterStepData(receivedData);
             } else if (this.currentStepKey === 'noReviewFields') {
-                // ...
-            }
-
-            if (isSuccessful) {
-                this.determineReviewProgressStep();
+                await this.saveRecordFieldsStepData(receivedData);
             }
 
             this.isManualLoading = false;
@@ -121,20 +135,45 @@ export default class ReviewProcessWizard extends LightningElement {
     }
 
     async saveRecordFilterStepData(compiledData) {
-        return await saveReviewProcessFilter({ reviewProcessId: this.recordId, compiledData: compiledData })
-            .then(() => {
-                this.record.fields.FilterCriteria__c.value = compiledData;
-                return true;
-            })
-            .catch((error) => {
-                console.error(error);
-                showToast(
-                    this,
-                    'Unable To Save Review Process Filters',
-                    'Please try again or contact your System Administrator',
-                    'error'
-                );
-            });
+        try {
+            await saveReviewProcessFilter({ reviewProcessId: this.recordId, compiledData: compiledData });
+            await refreshApex(this.wiredRecordResult);
+            showToast(
+                this,
+                'Review Process Filtering Successfully Saved',
+                'Please specify fields and field instructions for the Review Process',
+                'success'
+            );
+        } catch (error) {
+            console.error(error);
+            showToast(
+                this,
+                'Unable To Save Review Process Filters',
+                'Please try again or contact your System Administrator',
+                'error'
+            );
+        }
+    }
+
+    async saveRecordFieldsStepData(compiledData) {
+        try {
+            await saveReviewProcessFields({ reviewProcessId: this.recordId, compiledData: compiledData });
+            await refreshApex(this.wiredRecordResult);
+            showToast(
+                this,
+                'Review Process Fields Successfully Saved',
+                'You\'ve entered all required data for the Process Review. Just a little more to go',
+                'success'
+            );
+        } catch (error) {
+            console.error(error);
+            showToast(
+                this,
+                'Unable To Save Review Process Fields',
+                'Please try again or contact your System Administrator',
+                'error'
+            );
+        }
     }
 
     get isLoading() {

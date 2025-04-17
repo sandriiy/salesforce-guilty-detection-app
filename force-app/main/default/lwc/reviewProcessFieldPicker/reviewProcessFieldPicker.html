@@ -1,28 +1,31 @@
 <template>
-    <div class="slds-grid slds-wrap">
+    <div class="slds-grid slds-wrap" style="position: relative;">
+        <lightning-spinner lwc:if={isLoading} alternative-text="Loading..." size="small"></lightning-spinner>
+
         <div class="slds-grid slds-wrap full-width"> 
-            <!-- Back Button on the left -->
             <div class="slds-col slds-size_6-of-12">
                 <lightning-button
-                    label="Back">
+                    label="Back"
+                    onclick={handleFieldsStepBack}>
                 </lightning-button>
             </div>
-        
-            <!-- Save Button on the right -->
             <div class="slds-col slds-size_6-of-12 slds-text-align_right">
                 <lightning-button
                     label="Save"
-                    variant="brand">
+                    variant="brand"
+                    onclick={handleFieldsStepSave}
+                    disabled={isIncompleteStep}>
                 </lightning-button>
             </div>
-        
-            <!-- Text Row Centered -->
-            <div class="slds-col slds-size_12-of-12 slds-text-align_center slds-m-top_medium">
+            <div lwc:if={isIncompleteStep} class="slds-col slds-size_12-of-12 slds-text-align_center slds-m-top_medium">
+                <p class="easy-wrappable-text slds-text-title">This step is currently <b>unavailable</b>. Please ensure the previous step has been completed and saved successfully.</p>
+            </div>
+            <div lwc:else class="slds-col slds-size_12-of-12 slds-text-align_center slds-m-top_medium">
                 <p class="easy-wrappable-text slds-text-title">Use the interface below to specify the fields that need to be reviewed. Each field can include instructional help text visible only to the reviewer.</p>
             </div>
         </div>
-        <div class="slds-col slds-size_12-of-12">
-            <div for:each={selectedFields} for:item="selectedField" for:index="index" key={selectedField.field} data-index={index}>
+        <div lwc:if={isAvailableStep} class="slds-col slds-size_12-of-12">
+            <div for:each={selectedFields} for:item="selectedField" for:index="index" key={selectedField.id} data-index={index}>
                 <div class="slds-grid slds-wrap slds-grid_align-center slds-m-top_small slds-card slds-card_boundary slds-p-around_small">
                     <div class="slds-size_1-of-1 slds-grid slds-gutters slds-nowrap">
                         <div class="slds-col slds-size_1-of-3">
@@ -30,14 +33,15 @@
                                 label="Field Name"
                                 value={selectedField.field}
                                 options={fieldOptions}
-                                onchange={handleFilterFieldChange}>
+                                onchange={handleFieldChange}>
                             </lightning-combobox>
                         </div>
                         <div class="slds-col" style="width: 100%;">
                             <lightning-input
                                 label="Additional Instructions"
                                 type="text"
-                                value={selectedField.helptext}>
+                                value={selectedField.helptext}
+                                onchange={handleFieldInstructionsChange}>
                             </lightning-input>
                         </div>
                     </div>
@@ -46,8 +50,9 @@
                             variant="destructive-text" 
                             label="Remove"
                             title="Remove This Field" 
-                            onclick={handleClick} 
-                            class="slds-col">
+                            onclick={handleRemoveField} 
+                            class="slds-col"
+                            disabled={isRemoveDisabled}>
                         </lightning-button>
                     </div>
                 </div>
@@ -56,7 +61,7 @@
                 <div>
                     <lightning-button
                         label="Add Field"
-                        onclick={handleAddFilter}>
+                        onclick={handleAddNewField}>
                     </lightning-button>
                 </div>
             </div>

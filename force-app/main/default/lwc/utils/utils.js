@@ -39,6 +39,11 @@ const DATE_FIELD_CONDITIONS = [
     { label: 'Is Null', value: 'isNull' }
 ];
 
+export const BOOLEAN_AS_PICKLIST_VALUES = [
+    { label: 'Yes', value: 'yes' },
+    { label: 'No', value: 'no' },
+];
+
 const showToast = (context, title, message, variant = 'info', mode = 'dismissable') => {
     context.dispatchEvent(new ShowToastEvent({
         title,
@@ -80,7 +85,7 @@ const getFieldTypeForInput = (fieldType) => {
         'STRING': 'text',
         'PICKLIST': 'picklist',
         'CURRENCY': 'currency',
-        'BOOLEAN': 'checkbox',
+        'BOOLEAN': 'picklist',
         'NUMBER': 'number',
         'INTEGER': 'number',
         'DOUBLE': 'number',
@@ -94,4 +99,11 @@ const getFieldTypeForInput = (fieldType) => {
     return fieldTypeMap[fieldType] || 'text'; 
 }
 
-export { showToast, isEmpty, getFieldTypeConditions, getFieldTypeForInput };
+const generateId = (length = 8) => {
+    return Array.from(crypto.getRandomValues(new Uint8Array(length)))
+        .map(b => b.toString(36))
+        .join('')
+        .slice(0, length);
+}
+
+export { showToast, isEmpty, getFieldTypeConditions, getFieldTypeForInput, generateId };

@@ -4,13 +4,15 @@ import searchSobjects from '@salesforce/apex/ReviewProcessController.getSObjects
 import getSobjectFields from '@salesforce/apex/ReviewProcessController.getAllSObjectFields';
 import getPicklistValues from '@salesforce/apex/ReviewProcessController.getPicklistValues';
 
-import { showToast, isEmpty, getFieldTypeConditions, getFieldTypeForInput } from 'c/utils';
+import { BOOLEAN_AS_PICKLIST_VALUES } from 'c/utils';
+import { showToast, isEmpty, getFieldTypeConditions, getFieldTypeForInput, generateId } from 'c/utils';
 import { validateFilterLogicStructure, validateFilterLogic, autoUpdateFilterLogic, recalculateFilterLogic } from 'c/filterLogicUtils';
 
 export default class ReviewProcessRecordFilter extends LightningElement {
     @api record;
     @api stepKey;
 
+    isLoading = false;
     reviewObject;
     @track sObjectOptions = [];
     @track fieldOptions = [];
@@ -19,43 +21,22 @@ export default class ReviewProcessRecordFilter extends LightningElement {
     filterLogic = '';
     filterLogicValidity = true;
 
+    async connectedCallback() {
+        this.isLoading = true;
+        await this.resolveDataPopulation();
+        this.isLoading = false;
+    }
+
     handleObjectSearch(event) {
         const searchResult = event.detail.value;
-        searchSobjects({ searchQuery: searchResult })
-            .then((data) => {
-                this.sObjectOptions = this.filterSobjectOptions(data);
-                
-                const customCombobox = this.template.querySelector('c-combobox[data-id="selectobject"]');
-                customCombobox.processSearchResult(this.sObjectOptions);
-            })
-            .catch((error) => {
-                console.error(error);
-                showToast(
-                    this,
-                    'Unable To Retrieve SObjects',
-                    'For more information, contact your System Administrator',
-                    'error'
-                );
-            });
+        this.resolveSearchQuery(searchResult);
     }
 
     handleObjectSelectChange(event) {
         this.reviewObject = event.detail.value;
-        getSobjectFields({ sObjectName: this.reviewObject })
-            .then((data) => {
-                this.fieldOptions = this.filterSobjectFieldOptions(data);
-                this.addNewFilterCondition();
-            })
-            .catch((error) => {
-                this.reviewObject = undefined;
-                console.error(error);
-                showToast(
-                    this,
-                    'Unable To Retrieve SObject Fields',
-                    'For more information, contact your System Administrator',
-                    'error'
-                );
-            });
+        this.clearReviewProcessFiltering();
+        this.resolveSobjectFieldsSearch();
+        this.addNewFilterCondition(); 
     }
 
     handleFilterFieldChange(event) {
@@ -122,7 +103,7 @@ export default class ReviewProcessRecordFilter extends LightningElement {
     }
 
     handleFilterStepSave(event) {
-        isVerifiedData = this.verifyData();
+        const isVerifiedData = this.verifyData();
         if (isVerifiedData) {
             // modal window to verify data
 
@@ -146,7 +127,8 @@ export default class ReviewProcessRecordFilter extends LightningElement {
                 label: field.label,
                 value: field.name,
                 lookupTo: field.referenceTo,
-                type: getFieldTypeForInput(field.type)
+                type: getFieldTypeForInput(field.type),
+                isBoolean: field.type === 'BOOLEAN'
             };
         });
     }
@@ -155,6 +137,30 @@ export default class ReviewProcessRecordFilter extends LightningElement {
         const field = this.fieldOptions.find(field => field.value === fieldName);
         return field ? field.type : 'text';
     }
+
+    resolveSearchQuery(searchQuery) {
+        searchSobjects({ searchQuery: searchQuery })
+            .then((data) => {
+                this.sObjectOptions = this.filterSobjectOptions(data);
+                
+                const customCombobox = this.template.querySelector('c-combobox[data-id="selectobject"]');
+                customCombobox.processSearchResult(this.sObjectOptions);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    }
+
+    async resolveSobjectFieldsSearch() {
+        await getSobjectFields({ sObjectName: this.reviewObject })
+            .then((data) => {
+                this.fieldOptions = this.filterSobjectFieldOptions(data);
+            })
+            .catch((error) => {
+                this.reviewObject = undefined;
+                console.error(error);
+            });
+    }
     
     resolveFieldReferences(filter) {
         const field = this.fieldOptions.find(field => field.value === filter.field);
@@ -162,7 +168,10 @@ export default class ReviewProcessRecordFilter extends LightningElement {
         if (filter.type === 'lookup') {
             filter.isLookup = true;
             filter.lookupTo = field.lookupTo;
-        } else if (filter.type === 'picklist') {
+        } else if (field.isBoolean === true) {
+            filter.isPicklist = true;
+            filter.options = BOOLEAN_AS_PICKLIST_VALUES;
+        } else if (filter.type === 'picklist' && field.type !== 'BOOLEAN') {
             filter.isPicklist = true;
             
             getPicklistValues({ sObjectName: this.reviewObject, fieldName: field.value })
@@ -182,6 +191,32 @@ export default class ReviewProcessRecordFilter extends LightningElement {
         }
     }
 
+    async resolveDataPopulation() {
+        const filterCriteria = this.record?.fields?.FilterCriteria__c?.value;
+        if (!isEmpty(filterCriteria)) {
+            const compiledData = JSON.parse(filterCriteria);
+            this.reviewObject = compiledData.selectedSObject;
+            this.filters = compiledData.selectedFilters;
+            this.filterLogic = compiledData.selectedFilterLogic;
+
+            if (!isEmpty(this.reviewObject)) {
+                await this.resolveSobjectFieldsSearch();
+            }
+
+            if (isEmpty(this.filters)) {
+                this.addNewFilterCondition(); 
+            }
+        }
+    }
+
+    compileFinalData() {
+        return JSON.stringify({
+            selectedSObject: this.reviewObject,
+            selectedFilters: this.filters,
+            selectedFilterLogic: this.filterLogic
+        });
+    }
+
     clearFilterReferences(filter) {
         filter.isLookup = false;
         filter.isPicklist = false;
@@ -190,9 +225,15 @@ export default class ReviewProcessRecordFilter extends LightningElement {
         filter.selectedCondition = '';
     }
 
+    clearReviewProcessFiltering() {
+        this.filterLogicValidity = true;
+        this.filters = [];
+        this.filterLogic = '';
+    }
+
     addNewFilterCondition() {
         this.filters.push({
-            id: this.generateId(),
+            id: generateId(),
             field: '',
             type: 'text',
             value: '',
@@ -209,25 +250,10 @@ export default class ReviewProcessRecordFilter extends LightningElement {
         this.filterLogic = autoUpdateFilterLogic(this.filterLogic, (this.filters.length-1));
     }
 
-    compileFinalData() {
-        return JSON.stringify({
-            selectedSObject: this.reviewObject,
-            selectedFilters: this.filters,
-            selectedFilterLogic: this.filterLogic
-        });
-    }
-
     notifyReviewProcessWizard(compiledFinalData) {
         this.dispatchEvent(new CustomEvent('stepsave', {
             detail: compiledFinalData
         }));
-    }
-
-    generateId(length = 8) {
-        return Array.from(crypto.getRandomValues(new Uint8Array(length)))
-            .map(b => b.toString(36))
-            .join('')
-            .slice(0, length);
     }
 
     verifyData() {
@@ -237,22 +263,25 @@ export default class ReviewProcessRecordFilter extends LightningElement {
                 'Missing SObject Selection For Review Process',
                 'Please ensure all required fields are correctly filled out before retrying'
             );
+            return false;
         } else if (!this.hasValidFilter()) {
             showToast(
                 this,
                 'Missing Record Filtering For Review Process',
                 'You must specify at least one filter. Please fill in the details and try again'
             );
+            return false;
         } else if (isEmpty(this.filterLogic)) {
             showToast(
                 this,
                 'Missing Filter Logic For Review Process',
                 'Filter logic is missing. Use filter indexes to define it and try again'
             );
+            return false;
         }
 
         const filterLogicErrors = validateFilterLogicStructure(this.filterLogic);
-        if (!isEmpty(filterLogicErrors)) {
+        if (!isEmpty(filterLogicErrors) || this.filterLogicValidity === false) {
             showToast(
                 this,
                 'Invalid Filter Logic For Review Process',
@@ -262,6 +291,7 @@ export default class ReviewProcessRecordFilter extends LightningElement {
             const filterLogicInput = this.refs.filterLogic;
             filterLogicInput.setCustomValidity(filterLogicErrors[0]);
             filterLogicInput.reportValidity();
+            return false;
         }
 
         return true;

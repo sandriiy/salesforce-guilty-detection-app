@@ -4,11 +4,9 @@ const tokenizeLogic = (logic) => {
 
 const isLogicalOperator = (token) => token === 'AND' || token === 'OR';
 
-const isParenthesis = (token) => token === '(' || token === ')';
-
 const validateFilterLogic = (logic, filterCount) => {
     if (!logic || logic.trim() === '') {
-        return { isValid: true, error: '' };
+        return { isValid: false, error: 'Filter logic must be specified' };
     }
 
     const fullMatchPattern = /^(\s*(\d+|AND|OR|\(|\))\s*)+$/;
@@ -31,11 +29,21 @@ const validateFilterLogic = (logic, filterCount) => {
             if (openParens < 0) {
                 return { isValid: false, error: 'Mismatched parentheses' };
             }
-        } else if (!validTokens.has(token) && !isValidIndex(token, filterCount)) {
-            return {
-                isValid: false,
-                error: `Invalid index: "${token}"`,
-            };
+        } else if (!validTokens.has(token)) {
+            if (!/^\d+$/.test(token)) {
+                return {
+                    isValid: false,
+                    error: `Invalid token: "${token}"`,
+                };
+            }
+
+            const index = parseInt(token, 10);
+            if (index >= filterCount) {
+                return {
+                    isValid: false,
+                    error: `Index "${index}" does not exist`,
+                };
+            }
         }
     }
 
