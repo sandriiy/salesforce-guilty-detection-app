@@ -1,0 +1,115 @@
+<template>
+    <div class="slds-grid slds-wrap">
+        <lightning-spinner lwc:if={isLoading} alternative-text="Loading..." size="small"></lightning-spinner>
+
+        <div class="slds-grid slds-nowrap slds-size_12-of-12 slds-grid_vertical-align-end">
+            <c-combobox 
+                data-id="selectobject" 
+                label="Records Type" 
+                lazy-search="true" 
+                value={reviewObject} 
+                options={sObjectOptions} 
+                onsearch={handleObjectSearch} 
+                onchange={handleObjectSelectChange}
+                class="select-object-combobox">
+            </c-combobox>
+            <div lwc:if={reviewObject} class="slds-col_bump-left">
+                <lightning-button
+                    label="Save"
+                    variant="brand"
+                    onclick={handleFilterStepSave}
+                    class="slds-m-left_x-small">
+                </lightning-button>
+            </div>
+        </div>
+        <div class="slds-col slds-size_12-of-12" lwc:if={reviewObject}>
+            <div class="slds-grid slds-wrap slds-m-vertical_small">
+                <div class="slds-col slds-grid_align-spread slds-text-align_center">
+                    <p class="easy-wrappable-text slds-text-title">Use the filtering interface below to select the records for review. At least one filter must be set.</p>
+                </div>
+            </div>
+            <div for:each={filters} for:item="filter" for:index="index" key={filter.id} data-index={index}>
+                <div class="slds-grid slds-wrap slds-grid_align-center slds-m-vertical_medium slds-card slds-card_boundary slds-p-around_small">
+                    <div class="slds-size_1-of-1 slds-grid slds-gutters slds-nowrap">
+                        <div class="slds-col slds-size_1-of-3">
+                            <lightning-combobox
+                                label="Field Name"
+                                value={filter.field}
+                                options={fieldOptions}
+                                onchange={handleFilterFieldChange}>
+                            </lightning-combobox>
+                        </div>
+                        <div class="slds-col slds-size_1-of-3">
+                            <lightning-combobox
+                                label="Condition"
+                                value={filter.selectedCondition}
+                                options={filter.conditions}
+                                onchange={handleFilterConditionChange}
+                                disabled={filter.isDisabledConditions}>
+                            </lightning-combobox>
+                        </div>
+                        <div class="slds-col slds-size_1-of-3">
+                            <lightning-combobox
+                                lwc:if={filter.isPicklist}
+                                label="Value"
+                                value={filter.value}
+                                options={filter.options}
+                                onchange={handleFieldValueChange}
+                                disabled={filter.isDisabledValue}>
+                            </lightning-combobox>
+                            <lightning-record-picker
+                                lwc:elseif={filter.isLookup}
+                                label="Value"
+                                value={filter.value}
+                                object-api-name={filter.lookupTo}
+                                onchange={handleFieldValueChange}
+                                disabled={filter.isDisabledValue}>
+                            </lightning-record-picker>
+                            <lightning-input
+                                lwc:else
+                                label="Value"
+                                type={filter.type}
+                                value={filter.value}
+                                onchange={handleFieldValueChange}
+                                disabled={filter.isDisabledValue}>
+                            </lightning-input>
+                        </div>
+                    </div>
+                    <div class="slds-grid slds-size_1-of-1 slds-gutters slds-grid_align-end slds-m-top_medium">
+                        <span class="filter-indexbox slds-grid_vertical-align-center slds-col">
+                            {index}
+                        </span>
+                        <lightning-button 
+                            variant="destructive-text" 
+                            label="Remove"
+                            title="Remove This Filter" 
+                            onclick={handleRemoveFilter} 
+                            class="slds-col"
+                            disabled={isRemoveDisabled}>
+                        </lightning-button>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-grid slds-grid_vertical-align-end slds-m-top_large">
+                <div>
+                    <lightning-button
+                        label="Add Filter"
+                        onclick={handleAddFilter}>
+                    </lightning-button>
+                </div>
+                <div class="slds-col_bump-left">
+                    <lightning-input
+                        lwc:ref="filterLogic"
+                        type="text" 
+                        label="Filter Logic" 
+                        field-level-help="Filter logic governs how and when filters apply to your review records. Use AND and OR operators to fine-tune your results."
+                        value={filterLogic}
+                        onblur={handleFilterLogicValidation}
+                        onchange={handleFilterLogicChange}
+                        class="slds-m-top_none">
+                    </lightning-input>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

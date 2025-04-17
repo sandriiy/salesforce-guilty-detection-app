@@ -1,0 +1,13 @@
+.clickable-step {
+    cursor: pointer;
+}
+
+.clickable-step:hover {
+    text-decoration: underline;
+    color: #005fb2;
+}
+
+.progress-step-container {
+    border-top: 1px solid #d8dde6;
+    padding: 1%;
+}

@@ -1,0 +1,9 @@
+.easy-wrappable-text {
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+.full-width {
+    width: 100%;
+}

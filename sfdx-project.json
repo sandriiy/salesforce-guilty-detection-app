@@ -3,9 +3,12 @@
     {
       "path": "force-app",
       "default": true
+    },
+    {
+      "path": "open-source"
     }
   ],
-  "name": "salesforce-quilty-detection-app",
+  "name": "salesforce-guilty-detection-app",
   "namespace": "",
   "sfdcLoginUrl": "https://login.salesforce.com",
   "sourceApiVersion": "63.0"
