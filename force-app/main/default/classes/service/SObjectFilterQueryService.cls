@@ -1,20 +1,11 @@
 public class SObjectFilterQueryService {
-    private String sObjectName;
-    private List<FilterConditionWrapper> filterConditions;
-    private String filterLogic;
 
-    public SObjectFilterQueryService() {
-        this.sObjectName = '';
-        this.filterConditions = new List<FilterConditionWrapper>();
-        this.filterLogic = '';
-    }
-
-    public Database.QueryLocator getFilteredRecords(SObjectFilterQueryServiceBuilder builder){
-        sObjectName = builder.getSObjectName();
-        filterConditions = builder.getFilterConditions();
-        filterLogic = builder.getFilterLogic();
+    public static Database.QueryLocator getFilteredRecords(SObjectFilterQueryServiceBuilder builder){
+        String sObjectName = builder.getSObjectName();
+        List<FilterConditionWrapper> filterConditions = builder.getFilterConditions();
+        String filterLogic = builder.getFilterLogic();
         
-        String whereClause = buildWhereClause(builder);    
+        String whereClause = buildWhereClause(builder);
         String query = 'Select Id From ' +  sObjectName + ' Where ' + whereClause;
         
         try {
@@ -23,10 +14,10 @@ public class SObjectFilterQueryService {
             throw new QueryException('Invalid query: ' + e.getMessage());
         }
     }
-    private String buildWhereClause(SObjectFilterQueryServiceBuilder builder){
-        sObjectName = builder.getSObjectName();
-        filterConditions = builder.getFilterConditions();
-        filterLogic = builder.getFilterLogic();
+    private static String buildWhereClause(SObjectFilterQueryServiceBuilder builder){
+        String sObjectName = builder.getSObjectName();
+        List<FilterConditionWrapper> filterConditions = builder.getFilterConditions();
+        String filterLogic = builder.getFilterLogic();
 
         Map<Integer,String> filterExpressions = new Map<Integer,String>();
         
@@ -42,7 +33,7 @@ public class SObjectFilterQueryService {
         
     }
     
-    private String buildFilterExpression(FilterConditionWrapper filters, String sObjectName){
+    private static String buildFilterExpression(FilterConditionWrapper filters, String sObjectName){
         String field = filters.field;
         String condition = filters.condition;
         String value = processValue(filters.field, filters.value, sObjectName);
@@ -81,7 +72,7 @@ public class SObjectFilterQueryService {
             }
         }
     }
-    private String processValue(String field, String value, String objectName){
+    private static String processValue(String field, String value, String objectName){
         try {
             Schema.SobjectType sObjectType = Schema.getGlobalDescribe().get(objectName);
             Schema.DescribeFieldResult fieldDescribe = sObjectType.getDescribe().fields.getMap().get(field).getDescribe();
