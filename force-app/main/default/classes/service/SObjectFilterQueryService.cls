@@ -20,7 +20,7 @@ public class SObjectFilterQueryService {
         try {
             return Database.getQueryLocator(query);
         } catch (Exception e) {
-            throw new SObjectFilterQueryException('Invalid query: ' + e.getMessage());
+            throw new QueryException('Invalid query: ' + e.getMessage());
         }
     }
     private String buildWhereClause(SObjectFilterQueryServiceBuilder builder){
@@ -96,12 +96,8 @@ public class SObjectFilterQueryService {
                 }
             }
         } catch (Exception e) {
-            throw new SObjectFilterQueryException('Invalid field "' + field + '": ' + e.getMessage());
+            throw new System.TypeException('Invalid field "' + field + '": ' + e.getMessage());
         }
     }
-    
-    public class SObjectFilterQueryException extends Exception {
-        
-    }
-    
+
 }
