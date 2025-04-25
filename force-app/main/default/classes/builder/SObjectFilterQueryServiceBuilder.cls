@@ -20,7 +20,7 @@ public class SObjectFilterQueryServiceBuilder {
   return filterConditions;
 }
 
-public String getFilterLogic() {
+ public String getFilterLogic() {
   return filterLogic;
 }
 
