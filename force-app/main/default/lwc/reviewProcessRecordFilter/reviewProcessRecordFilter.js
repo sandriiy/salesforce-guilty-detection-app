@@ -4,6 +4,7 @@ import searchSobjects from '@salesforce/apex/ReviewProcessController.getSObjects
 import getSobjectFields from '@salesforce/apex/ReviewProcessController.getAllSObjectFields';
 import getPicklistValues from '@salesforce/apex/ReviewProcessController.getPicklistValues';
 
+import { keyboardUndoRedoUtils } from 'c/keyboardUndoRedoUtils';
 import { BOOLEAN_AS_PICKLIST_VALUES } from 'c/utils';
 import { showToast, isEmpty, getFieldTypeConditions, getFieldTypeForInput, generateId } from 'c/utils';
 import { validateFilterLogicStructure, validateFilterLogic, autoUpdateFilterLogic, recalculateFilterLogic } from 'c/filterLogicUtils';
@@ -12,6 +13,7 @@ export default class ReviewProcessRecordFilter extends LightningElement {
     @api record;
     @api stepKey;
 
+    isKeyboardRegistered = false;
     isLoading = false;
     reviewObject;
     @track sObjectOptions = [];
@@ -25,6 +27,18 @@ export default class ReviewProcessRecordFilter extends LightningElement {
         this.isLoading = true;
         await this.resolveDataPopulation();
         this.isLoading = false;
+    }
+
+    renderedCallback() {
+        const fieldsContainer = this.refs.filtersContainer;
+        if (!this.isKeyboardRegistered && !isEmpty(fieldsContainer)) {
+            this.resolveRedoUndoTracking(fieldsContainer);
+            this.isKeyboardRegistered = true;
+        }
+    }
+
+    disconnectedCallback() {
+        keyboardUndoRedoUtils.unregister(this);
     }
 
     handleObjectSearch(event) {
@@ -56,6 +70,7 @@ export default class ReviewProcessRecordFilter extends LightningElement {
         selectedFilter.isDisabledValue = isEmpty(selectedFilter.selectedCondition) ? true : false;
 
         this.resolveFieldReferences(selectedFilter);
+        keyboardUndoRedoUtils.pushState(this);
     }
 
     handleFilterConditionChange(event) {
@@ -67,6 +82,7 @@ export default class ReviewProcessRecordFilter extends LightningElement {
         let selectedFilter = this.filters[parentContainerIndex];
         selectedFilter.selectedCondition = selectedOption;
         selectedFilter.isDisabledValue = isEmpty(selectedFilter.selectedCondition) ? true : false;
+        keyboardUndoRedoUtils.pushState(this);
     }
 
     handleFieldValueChange(event) {
@@ -77,10 +93,12 @@ export default class ReviewProcessRecordFilter extends LightningElement {
 
         let selectedFilter = this.filters[parentContainerIndex];
         selectedFilter.value = selectedValue;
+        keyboardUndoRedoUtils.pushState(this);
     }
 
     handleAddFilter(event) {
         this.addNewFilterCondition();
+        keyboardUndoRedoUtils.pushState(this);
     }
 
     handleRemoveFilter(event) {
@@ -88,6 +106,7 @@ export default class ReviewProcessRecordFilter extends LightningElement {
         const parentContainerIndex = parentContainer.getAttribute('data-index');
         this.filters.splice(parentContainerIndex, 1);
         this.filterLogic = recalculateFilterLogic(this.filterLogic, parentContainerIndex);
+        keyboardUndoRedoUtils.pushState(this);
     }
 
     handleFilterLogicChange(event) {
@@ -189,6 +208,22 @@ export default class ReviewProcessRecordFilter extends LightningElement {
                     );
                 });
         }
+    }
+
+    resolveRedoUndoTracking(container) {
+        keyboardUndoRedoUtils.register(this, {
+            element: container,
+            getState: () => ({
+                filters: this.filters,
+                filterLogic: this.filterLogic,
+                filterLogicValidity: this.filterLogicValidity
+            }),
+            setState: (state) => {
+                this.filters = [...state.filters],
+                this.filterLogic = state.filterLogic,
+                this.filterLogicValidity = state.filterLogicValidity
+            }
+        });
     }
 
     async resolveDataPopulation() {
