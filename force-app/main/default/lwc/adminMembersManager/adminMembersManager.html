@@ -1,0 +1,80 @@
+<template>
+    <div class="slds-card add-members-card slds-theme_default">
+        <div class="slds-card__header slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+            <div class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__figure slds-m-top_xxx-small">
+                    <lightning-icon 
+                        icon-name="standard:team_member"
+                        class="add-members-icon"
+                        size="small">
+                    </lightning-icon>
+                </div>
+                <div class="slds-media__body">
+                    <span class="add-members-title">Guilty Members ({allMembers.length})</span>
+                </div>
+            </div>
+    
+            <lightning-button-icon 
+                icon-name={membersContentToggleIcon}
+                variant="border-filled"
+                alternative-text="Hide/Show"
+                onclick={handleMembersContentToggle}
+                class="add-members-accordion">
+            </lightning-button-icon>
+        </div>
+    
+        <div class={membersContentClass} style="overflow: initial;">
+            <div class="slds-grid slds-grid_vertical">
+                <hr class="slds-m-vertical_medium add-members-divider"/>
+                <template lwc:if={allMembers.length} for:each={allMembers} for:item="member">
+                    <div key={member.Id} data-id={member.Id} class="slds-grid add-members-container">
+                        <!-- Avatar -->
+                        <div class="slds-m-right_small">
+                            <img src={member.SmallPhotoUrl} alt={member.Name} class="slds-avatar slds-avatar_circle slds-avatar_medium" />
+                        </div>
+            
+                        <!-- Name & Title -->
+                        <div class="slds-grow">
+                            <div class="slds-text-body_regular slds-truncate" title={member.Name}>{member.Name}</div>
+                            <div class="slds-text-body_small slds-text-color_weak">{member.Title}</div>
+                        </div>
+            
+                        <!-- Role Dropdown -->
+                        <div class="slds-col_bump-left slds-m-right_small">
+                            <div class="slds-dropdown-trigger slds-dropdown-trigger_click">
+                                <lightning-combobox
+                                    value={member.role}
+                                    options={roleOptions}
+                                    variant="label-hidden"
+                                    class="add-members-action"
+                                    dropdown-alignment="top-right"
+                                    onchange={handleMemberRoleChange}
+                                ></lightning-combobox>
+                            </div>
+                        </div>
+            
+                        <!-- Remove Action -->
+                        <div>
+                            <lightning-button-icon
+                                icon-name="utility:unlinked"
+                                variant="border-filled"
+                                alternative-text="Remove Member"
+                                class="add-members-action"
+                                onclick={handleRemoveMemberClick}
+                            ></lightning-button-icon>
+                        </div>
+                    </div>
+                </template>
+                <template lwc:else>
+                    <span class="slds-align_absolute-center slds-text-title">No members found. You&rsquo;re the sole one listed.</span>
+                </template>
+            </div>
+            
+            <div class="add-members-button-container">
+                <button type="submit" onclick={handleMemberAddClick} class="add-members-button slds-button slds-button_brand slds-button_stretch">Add Member</button>
+            </div>
+
+            <lightning-spinner lwc:if={isLoading} alternative-text="Loading" size="small"></lightning-spinner>
+        </div>
+    </div>
+</template>

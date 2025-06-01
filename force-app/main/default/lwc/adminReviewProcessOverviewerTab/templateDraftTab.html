@@ -1,0 +1,52 @@
+<template>
+    <div class="slds-grid slds-grid_vertical overview-content-data-tab">
+        <template for:each={filteredRecords} for:item="record">
+            <c-guilty-accordion key={record.Id} data-id={record.Id} name={record.Name} total={record.TotalReviewableRecords__c} positive={record.PositiveFeedbackAmount__c} negative={record.NegativeFeedbackAmount__c}>
+                <div class="slds-border_top slds-m-bottom_medium"></div>
+                <div class="slds-text-align_center">
+                    <h2 class="title slds-m-top_small">HEADER STATUS</h2>
+                    <p class="message slds-m-top_x-small">
+                        HEADER HELP TEXT, IF READY TO BE STARTED OR NOT
+                    </p>
+                </div>
+
+                <!-- TO BE GENERATED VIA FOR:EACH -->
+                <div class="status-list slds-grid slds-wrap slds-p-horizontal_large slds-p-vertical_small slds-text-align_center slds-m-top_small">
+                    <div class="slds-col slds-size_1-of-2 slds-p-around_x-small">
+                        <lightning-icon icon-name="utility:check" variant="success" size="x-small"></lightning-icon>
+                        <span class="slds-m-left_x-small">Records and Filters</span>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2 slds-p-around_x-small">
+                        <lightning-icon icon-name="utility:close" variant="error" size="x-small"></lightning-icon>
+                        <span class="slds-m-left_x-small">Fields and Instructions</span>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2 slds-p-around_x-small">
+                        <lightning-icon icon-name="utility:check" variant="success" size="x-small"></lightning-icon>
+                        <span class="slds-m-left_x-small">Additional Information</span>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2 slds-p-around_x-small">
+                        <lightning-icon icon-name="utility:close" variant="error" size="x-small"></lightning-icon>
+                        <span class="slds-m-left_x-small">Start and End Date</span>
+                    </div>
+                </div>
+
+                <div class="slds-text-align_center slds-m-top_medium">
+                    <lightning-button
+                        label="Submit Review Process"
+                        variant="brand"
+                        class="slds-m-around_x-small"
+                        style="min-width: 180px;"
+                        disabled
+                    ></lightning-button>
+                    <lightning-button
+                        label="View Review Process"
+                        variant="neutral"
+                        class="slds-m-around_x-small"
+                        style="min-width: 180px;"
+                        onclick={handleViewClick}
+                    ></lightning-button>
+                </div>
+            </c-guilty-accordion>
+        </template>
+    </div>
+</template>
