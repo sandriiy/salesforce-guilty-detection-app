@@ -1,0 +1,69 @@
+<template>
+    <div style="position: relative;">
+        <div class="overview-header">
+            <div class="slds-grid slds-gutters slds-m-bottom_small">
+                <div class="slds-col search-container">
+                    <div class="slds-grid slds-input-has-icon slds-input-has-icon_left">
+                        <lightning-icon 
+                            icon-name="utility:search" 
+                            alternative-text="Search" 
+                            size="x-small" 
+                            class="slds-input__icon slds-input__icon_left">
+                        </lightning-icon>
+                        <input lwc:ref="searchTerm" type="text" class="slds-input search-input" placeholder="Search..." />
+                    </div>
+                </div>
+                <div class="slds-col_bump-left slds-no-flex slds-align-middle">
+                    <lightning-button 
+                        label="Search" 
+                        variant="neutral" 
+                        class="search-button"
+                        onclick={handleSearchClick}>
+                    </lightning-button>
+                </div>
+                <div class="slds-no-flex slds-align-middle slds-m-left_small slds-m-right_small">
+                    <lightning-button-icon 
+                        icon-name="utility:refresh" 
+                        alternative-text="Refresh" 
+                        title="Refresh Records"
+                        onclick={handleRefreshClick}>
+                    </lightning-button-icon>
+                </div>
+            </div>
+    
+            <div class="slds-grid slds-gutters slds-align_absolute-center">
+                <div class="slds-col slds-size_1-of-1">
+                    <div class="slds-grid slds-gutters slds-wrap slds-align_absolute-center">
+                        <div class="slds-col">
+                            <lightning-input class="search-radio" type="radio" onchange={handleOwnershipChange} label="Owned By Me" name="ownershipFilter" value="me" checked></lightning-input>
+                        </div>
+                        <div class="slds-col">
+                            <lightning-input class="search-radio" type="radio" onchange={handleOwnershipChange} label="Owned By All" name="ownershipFilter" value="all"></lightning-input>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <lightning-tabset active-tab-value={activeTab}>
+            <lightning-tab label="Drafts" value="draft" onactive={handleActiveTab}>
+                <div lwc:if={isUnknownState} class="slds-m-top_x-small">{unknownStateMessage}</div>
+                <c-admin-review-process-overviewer-tab lwc:else key={activeTab} lwc:ref="draftTab" records={activeRecords} ownership-id={recordsOwnership} active-tab={activeTab}></c-admin-review-process-overviewer-tab>
+            </lightning-tab>
+            <lightning-tab label="Pending" value="pending" onactive={handleActiveTab}>
+                <div lwc:if={isUnknownState} class="slds-m-top_x-small">{unknownStateMessage}</div>
+                <c-admin-review-process-overviewer-tab lwc:else lwc:ref="pendingTab" records={activeRecords} ownership-id={recordsOwnership} active-tab={activeTab}></c-admin-review-process-overviewer-tab>
+            </lightning-tab>
+            <lightning-tab label="Ongoing" value="ongoing" onactive={handleActiveTab}>
+                <div lwc:if={isUnknownState} class="slds-m-top_x-small">{unknownStateMessage}</div>
+                <c-admin-review-process-overviewer-tab lwc:else lwc:ref="ongoingTab" records={activeRecords} ownership-id={recordsOwnership} active-tab={activeTab}></c-admin-review-process-overviewer-tab>
+            </lightning-tab>
+            <lightning-tab label="Completed" value="completed" onactive={handleActiveTab}>
+                <div lwc:if={isUnknownState} class="slds-m-top_x-small">{unknownStateMessage}</div>
+                <c-admin-review-process-overviewer-tab lwc:else lwc:ref="completedTab" records={activeRecords} ownership-id={recordsOwnership} active-tab={activeTab}></c-admin-review-process-overviewer-tab>
+            </lightning-tab>
+        </lightning-tabset>
+
+        <lightning-spinner lwc:if={isLoading} alternative-text="Loading..." size="small"></lightning-spinner>
+    </div>
+</template>

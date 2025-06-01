@@ -16,11 +16,6 @@
                 <label>Good</label>
             </value>
             <value>
-                <fullName>Needs Extra Attention</fullName>
-                <default>false</default>
-                <label>Needs Extra Attention</label>
-            </value>
-            <value>
                 <fullName>Bad</fullName>
                 <default>false</default>
                 <label>Bad</label>

@@ -1,0 +1,59 @@
+.dashboard-container {
+    height: 100%;
+}
+
+.left-panel {
+    min-width: 200px;
+}
+
+.separator {
+    width: 1px;
+    background-color: #d8dde6;
+}
+
+.right-panel {
+    flex-grow: 1;
+}
+
+.graph-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+}
+
+.chart-canvas {
+    width: 300px;
+    height: 300px;
+}
+
+.carousel-nav {
+    gap: 0.75rem;
+}
+
+.dot-wrapper {
+    position: relative;
+}
+
+.carousel-dot {
+    opacity: 0;
+    width: 1rem;
+    height: 1rem;
+    position: absolute;
+    cursor: pointer;
+}
+
+.carousel-dot + label {
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+    display: inline-block;
+    background-color: #d8dde6;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+}
+
+.carousel-dot:checked + label {
+    background-color: #1589ee; /* Salesforce blue */
+}

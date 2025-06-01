@@ -1,0 +1,66 @@
+.add-members-card {
+    margin-bottom: 0;
+}
+
+.add-members-card lightning-card {
+    margin-bottom: 0 !important;
+}
+
+.add-members-icon {
+    --sds-c-icon-color-background: rgb(54, 61, 77);
+}
+
+.add-members-title {
+    font-size: 1.25em;
+    font-weight: 550;
+}
+
+.add-members-accordion {
+    --slds-g-color-border-base-4: rgb(200, 200, 200);
+}
+
+.add-members-action {
+    --slds-g-color-border-base-4: rgb(180, 180, 180);
+}
+
+.add-members-container {
+    padding: 0 1rem 0.5rem 1rem;
+}
+
+.add-members-divider {
+    width: 94%;
+    margin: 0.3rem auto 1rem auto;
+}
+
+.add-members-button-container {
+    margin-top: 1rem;
+}
+
+.add-members-button { 
+    --slds-c-button-brand-color-background: rgb(54, 61, 77);
+    --slds-c-button-brand-color-border: rgb(54, 61, 77);
+    --slds-c-button-brand-color-background-hover: #000000;
+    --slds-c-button-brand-color-border-hover: #000000;
+}
+
+.add-members-button:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.add-members-content {
+    overflow: hidden;
+    transition: opacity 0.3s ease, max-height 0.4s ease, visibility 0.4s ease;
+}
+
+.add-members-content.visible {
+    visibility: visible;
+    opacity: 1;
+    max-height: 1000px;
+}
+
+.add-members-content.hidden {
+    visibility: hidden;
+    opacity: 0;
+    max-height: 0;
+}

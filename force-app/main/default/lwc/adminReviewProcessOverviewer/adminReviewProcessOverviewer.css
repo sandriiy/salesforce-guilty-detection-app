@@ -1,0 +1,35 @@
+.overview-header {
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.overview-header .search-container {
+    width: 100%;
+}
+
+.overview-header .search-button {
+    --slds-c-button-text-color: #FFFFFF;
+    --slds-c-button-text-color-hover: #FFFFFF;
+    --slds-c-button-neutral-color-background: rgb(54, 61, 77);
+    --slds-c-button-neutral-color-border: rgb(54, 61, 77);
+    --slds-c-button-neutral-color-background-hover: #000000;
+    --slds-c-button-neutral-color-border-hover: #000000;
+    --slds-c-button-text-color-active: #FFFFFF;
+    --slds-c-button-neutral-color-background-active: #000000;
+    --slds-c-button-neutral-color-border-active: #000000;
+}
+
+.overview-header .search-radio {
+    --slds-c-radio-color-background-checked: rgb(54, 61, 77);
+    --slds-c-radio-color-border-checked: rgb(54, 61, 77);
+    --slds-s-mark-color-foreground-checked: #FFFFFF;
+}
+
+.overview-header .search-button:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.overview-header .search-input {
+    width: 100%;
+}

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>Draft</fullName>
+        <default>true</default>
+        <label>Draft</label>
+    </customValue>
+    <customValue>
+        <fullName>Pending</fullName>
+        <default>false</default>
+        <label>Pending</label>
+    </customValue>
+    <customValue>
+        <fullName>Ongoing</fullName>
+        <default>false</default>
+        <label>Ongoing</label>
+    </customValue>
+    <customValue>
+        <fullName>Completed</fullName>
+        <default>false</default>
+        <label>Completed</label>
+    </customValue>
+    <customValue>
+        <fullName>Overdue</fullName>
+        <default>false</default>
+        <label>Overdue</label>
+    </customValue>
+    <masterLabel>Guilty Review Process Statutes</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>
