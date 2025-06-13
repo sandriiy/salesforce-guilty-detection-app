@@ -24,6 +24,16 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>ReviewProcess__c.hasNotifyReviewers__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>ReviewProcess__c.isIncompleteExpandable__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>ReviewProcess__c.FieldsForReview__c</field>
         <readable>true</readable>
     </fieldPermissions>

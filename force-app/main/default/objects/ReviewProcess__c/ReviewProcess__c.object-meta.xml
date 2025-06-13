@@ -147,7 +147,7 @@
         <type>Default</type>
     </actionOverrides>
     <allowInChatterGroups>false</allowInChatterGroups>
-    <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
+    <compactLayoutAssignment>ReviewProcessDefault</compactLayoutAssignment>
     <deploymentStatus>Deployed</deploymentStatus>
     <description>Initialization of the records reviewing process with filtering of necessary data and fields.</description>
     <enableActivities>false</enableActivities>

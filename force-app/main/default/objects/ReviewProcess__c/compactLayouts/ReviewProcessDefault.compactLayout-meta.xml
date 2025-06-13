@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CompactLayout xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ReviewProcessDefault</fullName>
+    <fields>Name</fields>
+    <fields>Status__c</fields>
+    <fields>OwnerId</fields>
+    <fields>PositiveFeedbackAmount__c</fields>
+    <fields>NegativeFeedbackAmount__c</fields>
+    <label>Review Process Default</label>
+</CompactLayout>
