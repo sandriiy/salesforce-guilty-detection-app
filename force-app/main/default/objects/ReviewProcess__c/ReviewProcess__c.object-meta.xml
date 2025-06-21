@@ -162,7 +162,6 @@
     <externalSharingModel>Private</externalSharingModel>
     <label>Review Process</label>
     <nameField>
-        <encryptionScheme>None</encryptionScheme>
         <label>Review Process Name</label>
         <trackHistory>false</trackHistory>
         <type>Text</type>
