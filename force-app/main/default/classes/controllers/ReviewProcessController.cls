@@ -29,6 +29,33 @@ public class ReviewProcessController {
         }
     }
 
+    @AuraEnabled(cacheable=true)
+    public static ReviewProcessNextStepDTO getReviewProcessNextStep(Id reviewProcessId) {
+        ReviewProcess__c reviewProcess = new ReviewProcessSelector().selectById(reviewProcessId);
+
+        if (String.isBlank(reviewProcess.FilterCriteria__c)) {
+            return new ReviewProcessNextStepDTO(
+                'Define Type & Filter',
+                false
+            );
+        } else if (String.isBlank(reviewProcess.FieldsForReview__c)) {
+            return new ReviewProcessNextStepDTO(
+                'Define Review Fields',
+                false
+            );
+        } else if (reviewProcess.StartDateTime__c == null || reviewProcess.EndDateTime__c == null) {
+            return new ReviewProcessNextStepDTO(
+                'Define Start/End Dates',
+                false
+            );
+        } else {
+            return new ReviewProcessNextStepDTO(
+                'Good To Go',
+                true
+            );
+        }
+    }
+
     @AuraEnabled
     public static List<EntityDefinition> getSObjectsBySearch(String searchQuery) {
         return [

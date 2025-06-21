@@ -7,6 +7,14 @@ public with sharing class ReviewProcessSelector {
         return Database.getCursor(selectReviewProcessesQuery);
     }
 
+    public ReviewProcess__c selectById(Id recordId) {
+        return [
+            SELECT Id, Status__c, FieldsForReview__c, FilterCriteria__c, StartDateTime__c, EndDateTime__c
+            FROM ReviewProcess__c 
+            WHERE Id =: recordId
+        ];
+    }
+
     public List<AggregateResult> selectAggregateCountByStatus() {
         return [
             SELECT Status__c status, COUNT(Id) total 

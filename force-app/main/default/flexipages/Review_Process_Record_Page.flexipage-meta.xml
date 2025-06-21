@@ -48,7 +48,7 @@
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
-                    <value>required</value>
+                    <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.ReviewInstructions__c</fieldItem>
                 <identifier>RecordReviewInstructions_cField</identifier>
