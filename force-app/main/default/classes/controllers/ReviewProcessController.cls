@@ -3,7 +3,8 @@ public class ReviewProcessController {
     public static void saveReviewProcessFilter(Id reviewProcessId, String compiledData) {
         ReviewProcess__c reviewProcess = new ReviewProcess__c(
             Id = reviewProcessId,
-            FilterCriteria__c = compiledData
+            FilterCriteria__c = compiledData,
+            isFilterCriteriaCompleted__c = true
         );
 
         try {
@@ -18,7 +19,8 @@ public class ReviewProcessController {
     public static void saveReviewProcessFields(Id reviewProcessId, String compiledData) {
         ReviewProcess__c reviewProcess = new ReviewProcess__c(
             Id = reviewProcessId,
-            FieldsForReview__c = compiledData
+            FieldsForReview__c = compiledData,
+            isFieldsForReviewCompleted__c = true
         );
 
         try {
@@ -27,6 +29,37 @@ public class ReviewProcessController {
             // log
             System.debug(ex.getMessage());
         }
+    }
+
+    @AuraEnabled
+    public static void moveReviewProcessToNextStage(Id reviewProcessId, String newStatus) {
+        ReviewProcess__c reviewProcess = new ReviewProcess__c(
+            Id = reviewProcessId,
+            Status__c = newStatus
+        );
+
+        try {
+            update reviewProcess;
+        } catch (DMLException ex) {
+            // log
+            System.debug(ex.getMessage());
+        }
+    }
+
+    @AuraEnabled
+    public static List<String> verifyReviewProcessReadiness(Id reviewProcessId) {
+        List<String> errors = new List<String>();
+        ReviewProcess__c reviewProcess = new ReviewProcessSelector().selectById(reviewProcessId);
+
+        if (reviewProcess.StartDateTime__c < System.now()) {
+            errors.add('Start Date/Time cannot be in the past');
+        }
+
+        if (reviewProcess.EndDateTime__c < System.now()) {
+            errors.add('End Date/Time cannot be in the past');
+        }
+
+        return errors;
     }
 
     @AuraEnabled(cacheable=true)

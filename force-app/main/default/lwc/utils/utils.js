@@ -130,4 +130,15 @@ const generateId = (length = 8) => {
         .slice(0, length);
 }
 
-export { showToast, isEmpty, getFieldTypeConditions, getFieldTypeForInput, generateId };
+const extractErrorMessage = (error) => {
+    let rawMessage =
+        error?.body?.message ||
+        error?.message ||
+        'Contact your System Administrator for assistance';
+
+    rawMessage = rawMessage.replace(/^System\.\w+Exception:\s*/i, '');
+    rawMessage = rawMessage.replace(/(\n|\\n).*$/, '').trim();
+    return rawMessage;
+}
+
+export { showToast, extractErrorMessage, isEmpty, getFieldTypeConditions, getFieldTypeForInput, generateId };

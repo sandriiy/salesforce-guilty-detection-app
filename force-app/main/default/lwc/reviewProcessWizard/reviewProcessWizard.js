@@ -162,7 +162,7 @@ export default class ReviewProcessWizard extends LightningElement {
             showToast(
                 this,
                 'Review Process Fields Successfully Saved',
-                'You\'ve entered all required data for the Process Review. Just a little more to go',
+                'You have successfully specified all the configuration. Just a little more to go',
                 'success'
             );
         } catch (error) {

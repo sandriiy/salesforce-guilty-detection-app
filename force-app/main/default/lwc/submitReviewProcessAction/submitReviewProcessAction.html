@@ -1,0 +1,35 @@
+<template>
+    <section class="slds-card slds-theme_default">
+        <lightning-spinner lwc:if={isLoading} alternative-text="Loading" size="small"></lightning-spinner>
+
+        <header class="slds-modal__header slds-grid slds-align_absolute-center">
+            <h2 class="slds-text-heading_small">Submit Review Process</h2>
+        </header>
+        <div class="slds-card__body slds-p-around_medium">
+            <template lwc:if={isError}>
+                <div class="slds-grid slds-grid_align-center slds-grid_vertical">
+                    <div class="slds-col slds-p-left_medium slds-m-bottom_x-small">
+                        <p class="slds-text-body_regular">Please correct the highlighted problems before submitting</p>
+                    </div>
+                    <div class="slds-col slds-p-left_medium slds-m-left_medium">
+                        <template for:each={errorList} for:item="error">
+                            <p key={error} class="slds-text-color_destructive">{error}</p>
+                        </template>
+                    </div>
+                </div>
+            </template>
+            <template lwc:else>
+                <p class="slds-text-body_regular slds-align_absolute-center slds-p-horizontal_medium">
+                    The review process is ready for submission. Once submitted, it will transition to the "Pending" status and begin automatically based on the specified timeline. You may also start it manually at any time after submission.
+                </p>
+            </template>
+        </div>
+
+        <footer class="slds-card__footer slds-grid slds-grid_align-end slds-p-around_small">
+            <div class="slds-button-group" role="group">
+                <lightning-button lwc:if={isError} variant="brand-outline" label="Go Back" title="Go Back" onclick={handleClose}></lightning-button>
+                <lightning-button lwc:else variant="brand" label="Submit" title="Submit" onclick={handleSubmit} class="slds-m-left_x-small"></lightning-button>
+            </div>
+        </footer>
+    </section>
+</template>
