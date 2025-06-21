@@ -31,8 +31,6 @@ export default class ReviewProcessViewer extends LightningElement {
         if (data) {
             this.nextStep = data.name;
             this.nextStepStyle = data.isReady ? 'color: #6cc230;' : 'color: #c03030;';
-        } else {
-            console.log(error);
         }
     }
 }
