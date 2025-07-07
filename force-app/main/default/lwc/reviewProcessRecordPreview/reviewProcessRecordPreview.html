@@ -1,0 +1,66 @@
+<template>
+    <lightning-modal-header label={label}></lightning-modal-header>
+
+    <lightning-modal-body>
+        <div class="slds-p-top_small slds-p-bottom_medium slds-text-align_center">
+            <p class="slds-text-heading_small slds-p-horizontal_medium">{content}</p>
+        </div>
+
+        <div class="slds-p-horizontal_medium">
+            <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-end slds-m-bottom_small">
+                <div>
+                    <span><strong>Total Records:</strong> {totalCount}</span>
+                </div>
+
+                <div class="slds-grid slds-grid_vertical-align-end">
+                    <span><strong>Displayed Records:</strong> {displayLimit}</span>
+                </div>
+            </div>
+
+            <div class="preview-table slds-table slds-table_cell-buffer slds-table_bordered">
+                <div class="slds-scrollable_x">
+                    <table class="slds-table">
+                        <thead>
+                            <tr>
+                                <template for:each={columns} for:item="column">
+                                    <th key={column.fieldName} scope="col">
+                                        <div class="slds-truncate" title={column.label}>{column.label}</div>
+                                    </th>
+                                </template>
+                                <th scope="col">
+                                    <button class="slds-button slds-button_icon" onclick={handleAddFields} title="Add Field">
+                                        <lightning-icon icon-name="utility:add" size="x-small"></lightning-icon>
+                                    </button>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- <template for:each={records} for:item="record">
+                                <tr key={record.Id}>
+                                    <template for:each={columns} for:item="column">
+                                        <td key={column.fieldName}>
+                                            <div class="slds-truncate" title="test">
+                                                <template if:true={column.isId}>
+                                                    <a href="#" target="_blank">FieldName</a>
+                                                </template>
+                                                <template if:false={column.isId}>
+                                                    FieldName
+                                                </template>
+                                            </div>
+                                        </td>
+                                    </template>
+                                    <td></td>
+                                </tr>
+                            </template> -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </lightning-modal-body>
+
+    <lightning-modal-footer>
+        <button type="button" class="slds-button slds-button_neutral" onclick={handleBack}>Go Back</button>
+        <button type="submit" class="okay-button slds-m-left_xx-small slds-button slds-button_brand" onclick={handleOkay} >Looks Good</button>
+    </lightning-modal-footer>
+</template>
