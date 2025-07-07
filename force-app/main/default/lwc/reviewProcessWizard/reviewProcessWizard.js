@@ -1,7 +1,8 @@
 import { LightningElement, api, track, wire } from 'lwc';
 import { getRecord } from "lightning/uiRecordApi";
-import { showToast, isEmpty } from 'c/utils';
+import { showToast, isEmpty, extractErrorMessage } from 'c/utils';
 
+import reviewProcessRecordPreview from 'c/reviewProcessRecordPreview';
 import saveReviewProcessFilter from '@salesforce/apex/ReviewProcessController.saveReviewProcessFilter';
 import saveReviewProcessFields from '@salesforce/apex/ReviewProcessController.saveReviewProcessFields';
 
@@ -137,19 +138,23 @@ export default class ReviewProcessWizard extends LightningElement {
     async saveRecordFilterStepData(compiledData) {
         try {
             await saveReviewProcessFilter({ reviewProcessId: this.recordId, compiledData: compiledData });
-            await refreshApex(this.wiredRecordResult);
-            showToast(
-                this,
-                'Review Process Filtering Successfully Saved',
-                'Please specify fields and field instructions for the Review Process',
-                'success'
-            );
+            showToast(this, 'Review Process Filtering Successfully Saved', '', 'success');
+
+            const previewResult = await reviewProcessRecordPreview.open({
+                label: 'Filtered Records Preview',
+                size: 'small',
+                content: 'You\'re viewing a preview of records based on your current setup. This includes only a portion of all available records, feel free to load more fields for deeper analysis.',
+            });
+
+            if (previewResult === 'okay') {
+                await refreshApex(this.wiredRecordResult);
+            }
         } catch (error) {
             console.error(error);
             showToast(
                 this,
                 'Unable To Save Review Process Filters',
-                'Please try again or contact your System Administrator',
+                extractErrorMessage(error),
                 'error'
             );
         }
