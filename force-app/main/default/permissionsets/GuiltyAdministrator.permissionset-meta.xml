@@ -23,6 +23,11 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>false</editable>
+        <field>ReviewProcess__c.isNotFulfilled__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>true</editable>
         <field>ReviewProcess__c.hasNotifyReviewers__c</field>
         <readable>true</readable>

@@ -1,20 +1,16 @@
-import { LightningElement, track, api, wire } from 'lwc';
+import { LightningElement, track, api } from 'lwc';
 import { CloseActionScreenEvent } from 'lightning/actions';
-import { showToast, isEmpty, extractErrorMessage } from 'c/utils';
+import { showToast, extractErrorMessage } from 'c/utils';
 import { updateRecord } from 'lightning/uiRecordApi';
 import moveReviewProcessToNextStage from '@salesforce/apex/ReviewProcessController.moveReviewProcessToNextStage';
-import verifyReadiness from '@salesforce/apex/ReviewProcessController.verifyReviewProcessReadiness';
 
-const NEXT_STATUS = 'Pending';
-export default class SubmitReviewProcessAction extends LightningElement {
+const NEXT_STATUS = 'Ongoing';
+export default class StartReviewProcessAction extends LightningElement {
     @api reviewProcessId;
-    @track isLoading = true;
-    @track isError;
-    @track errorList = [];
+    @track isLoading = false;
 
     @api set recordId(value) {
         this.reviewProcessId = value;
-        this.checkReadiness();
     }
 
     get recordId() {
@@ -25,14 +21,14 @@ export default class SubmitReviewProcessAction extends LightningElement {
         this.dispatchEvent(new CloseActionScreenEvent());
     }
 
-    async handleSubmit(event) {
+    async handleStart(event) {
         this.isLoading = true;
         await moveReviewProcessToNextStage({ reviewProcessId: this.recordId, newStatus: NEXT_STATUS })
             .then((data) => {
                 showToast(
                     this,
-                    'Review Process Successfully Submitted',
-                    'Review Process has been moved to the "Pending" status and will start as scheduled',
+                    'Review Process Successfully Started',
+                    'Review Process has been moved to the "Ongoing" status and is ready for reviewers',
                     'success'
                 );
             })
@@ -40,7 +36,7 @@ export default class SubmitReviewProcessAction extends LightningElement {
                 console.error(error);
                 showToast(
                     this,
-                    'Unable to Submit Review Process',
+                    'Unable to Start Review Process',
                     extractErrorMessage(error),
                     'error'
                 );
@@ -49,21 +45,5 @@ export default class SubmitReviewProcessAction extends LightningElement {
         await updateRecord({ fields: { Id: this.recordId }});
         this.isLoading = false;
         this.dispatchEvent(new CloseActionScreenEvent());
-    }
-
-    checkReadiness() {
-        verifyReadiness({ reviewProcessId: this.recordId })
-            .then((data) => {
-                if (isEmpty(data)) {
-                    this.isError = false;
-                    this.errorList = [];
-                } else {
-                    this.isError = true;
-                    this.errorList = data;
-                }
-            })
-            .finally(() => {
-                this.isLoading = false;
-            });
     }
 }
