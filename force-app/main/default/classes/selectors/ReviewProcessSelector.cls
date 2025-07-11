@@ -7,6 +7,25 @@ public with sharing class ReviewProcessSelector {
         return Database.getCursor(selectReviewProcessesQuery);
     }
 
+    public List<ReviewProcess__c> selectWithUserFeedbacksByStatus(Id userId, String status) {
+        return [
+            SELECT Id,
+                Name,
+                EndDateTime__c,
+                Status__c,
+                TotalReviewableRecords__c,
+                (
+                    SELECT Id, Name, RecordId__c,
+                        RecordType__c, isReviewed__c
+                    FROM Review_Feedback__r
+                    WHERE ReviewerId__c = :userId
+                )
+            FROM ReviewProcess__c
+            WHERE Status__c = :status
+        ];
+    }
+
+
     public ReviewProcess__c selectById(Id recordId) {
         return [
             SELECT Id, Status__c, FieldsForReview__c, FilterCriteria__c, StartDateTime__c, EndDateTime__c

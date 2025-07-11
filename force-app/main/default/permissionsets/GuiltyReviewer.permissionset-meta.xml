@@ -4,6 +4,10 @@
         <application>Find_the_Guilty</application>
         <visible>true</visible>
     </applicationVisibilities>
+    <classAccesses>
+        <apexClass>GuiltyReviewerController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
     <description>Allows analyzing and evaluating assigned records for the &apos;Find The Guilty&apos; application, including the ability to determine data completeness according to the instructions and provide a final assessment.</description>
     <fieldPermissions>
         <editable>true</editable>
