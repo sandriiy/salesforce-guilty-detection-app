@@ -129,7 +129,7 @@
     <actionOverrides>
         <actionName>View</actionName>
         <comment>Action override created by Lightning App Builder during activation.</comment>
-        <content>Review_Feedback_Record_Page</content>
+        <content>Review_Feedback_Item_Record_Page</content>
         <formFactor>Large</formFactor>
         <skipRecordTypeSelect>false</skipRecordTypeSelect>
         <type>Flexipage</type>
@@ -137,7 +137,7 @@
     <actionOverrides>
         <actionName>View</actionName>
         <comment>Action override created by Lightning App Builder during activation.</comment>
-        <content>Review_Feedback_Record_Page</content>
+        <content>Review_Feedback_Item_Record_Page</content>
         <formFactor>Small</formFactor>
         <skipRecordTypeSelect>false</skipRecordTypeSelect>
         <type>Flexipage</type>
@@ -149,24 +149,22 @@
     <allowInChatterGroups>false</allowInChatterGroups>
     <compactLayoutAssignment>GuiltyDefault</compactLayoutAssignment>
     <deploymentStatus>Deployed</deploymentStatus>
-    <description>Evaluation of an individual record based on Process Review</description>
     <enableActivities>false</enableActivities>
     <enableBulkApi>true</enableBulkApi>
     <enableFeeds>false</enableFeeds>
-    <enableHistory>true</enableHistory>
+    <enableHistory>false</enableHistory>
     <enableLicensing>false</enableLicensing>
-    <enableReports>false</enableReports>
+    <enableReports>true</enableReports>
     <enableSearch>false</enableSearch>
     <enableSharing>true</enableSharing>
     <enableStreamingApi>true</enableStreamingApi>
     <externalSharingModel>ControlledByParent</externalSharingModel>
-    <label>Review Feedback</label>
+    <label>Review Feedback Item</label>
     <nameField>
-        <label>Review Feedback Name</label>
-        <trackHistory>false</trackHistory>
+        <label>Feedback Item Name</label>
         <type>Text</type>
     </nameField>
-    <pluralLabel>Review Feedback</pluralLabel>
+    <pluralLabel>Review Feedback Items</pluralLabel>
     <searchLayouts></searchLayouts>
     <sharingModel>ControlledByParent</sharingModel>
     <visibility>Public</visibility>

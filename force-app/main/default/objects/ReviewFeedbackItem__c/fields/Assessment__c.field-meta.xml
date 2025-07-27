@@ -3,7 +3,6 @@
     <fullName>Assessment__c</fullName>
     <label>Assessment</label>
     <required>false</required>
-    <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Picklist</type>
     <valueSet>

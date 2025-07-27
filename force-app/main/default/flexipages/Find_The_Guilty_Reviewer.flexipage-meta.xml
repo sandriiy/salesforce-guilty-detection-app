@@ -1,12 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
     <flexiPageRegions>
-        <name>main</name>
+        <itemInstances>
+            <componentInstance>
+                <componentName>reviewerReviewProcessSummarizer</componentName>
+                <identifier>c_reviewerReviewProcessSummarizer</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>region1</name>
+        <type>Region</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <name>region2</name>
+        <type>Region</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <name>region3</name>
         <type>Region</type>
     </flexiPageRegions>
     <masterLabel>Find The Guilty Reviewer</masterLabel>
     <template>
-        <name>flexipage:defaultAppHomeTemplate</name>
+        <name>flexipage:appHomeTemplateTwoColumnsStacked</name>
     </template>
     <type>AppPage</type>
 </FlexiPage>

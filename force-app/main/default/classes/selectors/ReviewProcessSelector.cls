@@ -25,10 +25,9 @@ public with sharing class ReviewProcessSelector {
         ];
     }
 
-
     public ReviewProcess__c selectById(Id recordId) {
         return [
-            SELECT Id, Status__c, FieldsForReview__c, FilterCriteria__c, StartDateTime__c, EndDateTime__c
+            SELECT Id, ReviewInstructions__c, Status__c, FieldsForReview__c, FilterCriteria__c, StartDateTime__c, EndDateTime__c
             FROM ReviewProcess__c 
             WHERE Id =: recordId
         ];

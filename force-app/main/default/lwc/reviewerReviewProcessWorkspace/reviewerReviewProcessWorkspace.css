@@ -1,8 +1,6 @@
 .reviewer-container {
     padding: 0.5rem 0;
     max-width: 99%;
-    max-height: 800px;
-    overflow-y: auto;
     margin: 0 auto;
 }
 
@@ -35,7 +33,7 @@
 }
 
 .reviewer-body {
-    margin-top: 1.5rem;
+    margin-top: 0.5rem;
 }
 
 .reviewer-stats {
@@ -78,7 +76,7 @@
 }
 
 .pending-review-container {
-    max-height: 170px;
+    max-height: 122px;
     overflow-y: auto;
 }
 
@@ -91,12 +89,6 @@
     align-items: center;
     justify-content: space-between;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.pending-review-card-content {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
 }
 
 .pending-review-name {
@@ -132,4 +124,14 @@
 
 .continue-review-button:hover {
     background-color: #f0f8ff;
+}
+
+.workspace-header {
+    width: 100%;
+    margin-bottom: 1rem;
+    padding: 0 0.5rem;
+}
+
+.workspace-header .search-container {
+    width: 100%;
 }
