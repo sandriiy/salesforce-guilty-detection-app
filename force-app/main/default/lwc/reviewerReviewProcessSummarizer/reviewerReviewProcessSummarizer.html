@@ -15,11 +15,11 @@
 
         <div class="slds-p-around_medium slds-col slds-grid_align-center summarizer-content">
             <div class="slds-box slds-box_xx-large slds-theme_default summarizer-box">
-                <template lwc:if={isDashboard}>
-                    <c-admin-review-process-dashboard></c-admin-review-process-dashboard>
+                <template lwc:if={isWorkspace}>
+                    <c-reviewer-review-process-workspace></c-reviewer-review-process-workspace>
                 </template>
                 <template lwc:elseif={isOverview}>
-                    <c-admin-review-process-overviewer></c-admin-review-process-overviewer>
+                    THIS IS OVERVIEW
                 </template>
             </div>
         </div>
