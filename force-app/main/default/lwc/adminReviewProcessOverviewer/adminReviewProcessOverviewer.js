@@ -32,16 +32,20 @@ export default class AdminReviewProcessOverviewer extends LightningElement {
             this.recordsOwnership = '';
         }
 
-        let activeTab = this.refs[`${this.activeTab}Tab`];
-        activeTab.resolveOwnershipQuery(this.recordsOwnership);
+        if (!this.isUnknownState) {
+            let activeTab = this.refs[`${this.activeTab}Tab`];
+            activeTab.resolveOwnershipQuery(this.recordsOwnership);
+        }
     }
 
     handleSearchClick(event) {
         let input = this.refs.searchTerm;
         let query = input?.value?.trim().toLowerCase() || '';
 
-        let activeTab = this.refs[`${this.activeTab}Tab`];
-        activeTab.resolveSearchQuery(query);
+        if (!this.isUnknownState) {
+            let activeTab = this.refs[`${this.activeTab}Tab`];
+            activeTab.resolveSearchQuery(query);
+        }
     }
 
     async handleRefreshClick(event) {

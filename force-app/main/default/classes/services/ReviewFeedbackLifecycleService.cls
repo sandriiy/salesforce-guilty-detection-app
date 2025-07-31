@@ -1,4 +1,4 @@
-public with sharing class ReviewFeedbackLifecycleService {
+public without sharing class ReviewFeedbackLifecycleService {
     private Id reviewerId;
     private Id reviewProcessId;
     private ReviewProcess__c reviewProcess;

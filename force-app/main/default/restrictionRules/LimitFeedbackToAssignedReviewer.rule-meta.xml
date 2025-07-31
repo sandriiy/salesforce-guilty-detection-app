@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RestrictionRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <active>true</active>
+    <description>Ensures that users can only see Review Feedback records where they are the assigned reviewer.</description>
+    <enforcementType>Restrict</enforcementType>
+    <masterLabel>Limit Feedback to Assigned Reviewer</masterLabel>
+    <recordFilter>ReviewerId__r.Id=$User.Id</recordFilter>
+    <targetEntity>ReviewFeedback__c</targetEntity>
+    <userCriteria>$User.IsActive=true</userCriteria>
+    <version>1</version>
+</RestrictionRule>

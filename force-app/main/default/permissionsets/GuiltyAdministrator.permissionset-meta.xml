@@ -43,6 +43,16 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>false</editable>
+        <field>ReviewProcess__c.NegativeFeedbackAmount__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>ReviewProcess__c.PositiveFeedbackAmount__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>true</editable>
         <field>ReviewProcess__c.ReviewInstructions__c</field>
         <readable>true</readable>
@@ -55,6 +65,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>ReviewProcess__c.Status__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>ReviewProcess__c.TotalReviewableRecords__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -99,9 +114,9 @@
         <allowDelete>true</allowDelete>
         <allowEdit>true</allowEdit>
         <allowRead>true</allowRead>
-        <modifyAllRecords>true</modifyAllRecords>
+        <modifyAllRecords>false</modifyAllRecords>
         <object>ReviewProcess__c</object>
-        <viewAllFields>true</viewAllFields>
+        <viewAllFields>false</viewAllFields>
         <viewAllRecords>true</viewAllRecords>
     </objectPermissions>
     <tabSettings>

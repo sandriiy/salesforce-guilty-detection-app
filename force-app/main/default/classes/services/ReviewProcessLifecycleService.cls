@@ -1,4 +1,4 @@
-public with sharing class ReviewProcessLifecycleService {
+public inherited sharing class ReviewProcessLifecycleService {
     private List<ReviewProcess__c> reviewProcesses;
 
     public ReviewProcessLifecycleService(List<ReviewProcess__c> reviewProcesses) {

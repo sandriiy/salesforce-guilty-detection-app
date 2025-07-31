@@ -1,4 +1,4 @@
-public class GuiltyReviewerController {
+public with sharing class GuiltyReviewerController {
     @AuraEnabled(cacheable=true)
     public static List<ReviewProcess__c> getOngoingReviewProcesses(Id userId) {
         ReviewProcessSelector reviewProcessSelector = new ReviewProcessSelector();

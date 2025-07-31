@@ -43,7 +43,6 @@ export default class ReviewerReviewProcessWorkspace extends LightningElement {
         let reviewFeedback;
         await beginNewFeedbackProcess({ reviewProcessId: reviewProcessId })
             .then(result => {
-                console.log(result);
                 reviewFeedback = result;
             })
             .catch(error => {

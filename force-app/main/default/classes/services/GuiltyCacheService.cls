@@ -1,4 +1,4 @@
-public class GuiltyCacheService {
+public inherited sharing class GuiltyCacheService {
     private final String compositeKey;
 
     public GuiltyCacheService(String guiltyPartKey, String guiltyUniqueKey) {

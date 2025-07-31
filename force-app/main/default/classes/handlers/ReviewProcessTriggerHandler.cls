@@ -1,4 +1,4 @@
-public class ReviewProcessTriggerHandler extends TriggerHandler {
+public without sharing class ReviewProcessTriggerHandler extends TriggerHandler {
     private Map<Id, ReviewProcess__c> newReviewProcessMap;
     private Map<Id, ReviewProcess__c> oldReviewProcessMap;
 

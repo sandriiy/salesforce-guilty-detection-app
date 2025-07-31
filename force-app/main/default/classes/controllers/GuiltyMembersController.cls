@@ -1,4 +1,4 @@
-public class GuiltyMembersController {
+public with sharing class GuiltyMembersController {
     @AuraEnabled(cacheable=true)
     public static Map<String, List<User>> getAllGuiltyMembers() {
         Map<String, List<User>> guiltyUsersByPermission = new Map<String, List<User>>();
