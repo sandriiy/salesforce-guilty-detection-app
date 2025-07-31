@@ -40,8 +40,18 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>true</editable>
+        <editable>false</editable>
+        <field>ReviewFeedback__c.ReviewProcessName__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>ReviewFeedback__c.ReviewerId__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>ReviewFeedback__c.isReviewed__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -64,6 +74,11 @@
         <field>ReviewProcess__c.Status__c</field>
         <readable>true</readable>
     </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>ReviewProcess__c.TotalReviewableRecords__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
     <hasActivationRequired>false</hasActivationRequired>
     <label>Guilty Reviewer</label>
     <objectPermissions>
@@ -78,7 +93,7 @@
     </objectPermissions>
     <objectPermissions>
         <allowCreate>true</allowCreate>
-        <allowDelete>true</allowDelete>
+        <allowDelete>false</allowDelete>
         <allowEdit>true</allowEdit>
         <allowRead>true</allowRead>
         <modifyAllRecords>false</modifyAllRecords>

@@ -1,4 +1,4 @@
-public class GuiltyAdminController {
+public with sharing class GuiltyAdminController {
     private static final String COMPONENT_KEY = 'admin';
 
     @AuraEnabled

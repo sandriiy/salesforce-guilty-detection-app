@@ -1,6 +1,6 @@
 <template>
     <div class="slds-grid slds-grid_vertical overview-content-data-tab">
-        <template for:each={filteredRecords} for:item="record">
+        <template lwc:if={filteredRecords.length} for:each={filteredRecords} for:item="record">
             <c-guilty-accordion key={record.Id} data-id={record.Id} name={record.Name} total={record.TotalReviewableRecords__c} positive={record.PositiveFeedbackAmount__c} negative={record.NegativeFeedbackAmount__c}>
                 <div class="slds-border_top slds-m-bottom_medium"></div>
                 <div class="slds-text-align_center">
@@ -54,6 +54,9 @@
                     ></lightning-button>
                 </div>
             </c-guilty-accordion>
+        </template>
+        <template lwc:else>
+            <div class="slds-m-top_x-small">No records found. Try adjusting your filter criteria</div>
         </template>
     </div>
 </template>

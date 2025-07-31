@@ -1,4 +1,4 @@
-public class ReviewProcessController {
+public with sharing class ReviewProcessController {
     @AuraEnabled
     public static void saveReviewProcessFilter(Id reviewProcessId, String compiledData) {
         ReviewProcess__c reviewProcess = new ReviewProcess__c(

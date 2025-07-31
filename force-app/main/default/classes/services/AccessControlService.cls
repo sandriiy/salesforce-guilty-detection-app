@@ -1,4 +1,4 @@
-public class AccessControlService {
+public inherited sharing class AccessControlService {
     private final Map<String, PermissionSet> GUILTY_PERMISSION_SETS = new Map<String, PermissionSet>();
     private final List<String> GUILTY_PERMISSION_NAMES = new List<String>{
         GuiltyConstants.GUILTY_REVIEWER_PERMISSION,
@@ -23,6 +23,7 @@ public class AccessControlService {
             ));
         }
 
+        addReviewerToPublicGroup(userIds, new List<String>{GuiltyConstants.GUILTY_REVIEWER_PERMISSION});
         return assignedPermissions;
     }
 
@@ -51,6 +52,7 @@ public class AccessControlService {
             ));
         }
 
+        addReviewerToPublicGroup(new List<Id>{userId}, permissionSetNames);
         return assignedPermissions;
     }
 
@@ -58,6 +60,7 @@ public class AccessControlService {
         List<String> permissionSetNames = ROLE_TO_PERMISSION_SET_NAME.get(role);
         List<Id> permissionSetIdsToRemove = fetchPermissionSetIds(permissionSetNames);
 
+        removeReviewerFromPublicGroup(new List<Id>{userId}, permissionSetNames);
         return new PermissionAssignmentSelector().selectByUserIdAndPermissionSetIds(
             userId,
             permissionSetIdsToRemove
@@ -65,6 +68,7 @@ public class AccessControlService {
     }
 
     public List<PermissionSetAssignment> removeMemberPermissions(Id userId) {
+        removeReviewerFromPublicGroup(new List<Id>{userId}, GUILTY_PERMISSION_NAMES);
         return new PermissionAssignmentSelector().selectByUserIdAndPermissionSets(
             userId,
             GUILTY_PERMISSION_SETS.values()
@@ -85,5 +89,23 @@ public class AccessControlService {
         }
 
         return permissionSetIds;
+    }
+
+    private void addReviewerToPublicGroup(List<Id> userIds, List<String> permissionSetNames) {
+        if (permissionSetNames.contains(GuiltyConstants.GUILTY_REVIEWER_PERMISSION)) {
+            System.enqueueJob(new GuiltyReviewerGroupSyncJob(
+                userIds,
+                GuiltyReviewerGroupSyncJob.GroupAction.Add
+            ));
+        }
+    }
+
+    private void removeReviewerFromPublicGroup(List<Id> userIds, List<String> permissionSetNames) {
+        if (permissionSetNames.contains(GuiltyConstants.GUILTY_REVIEWER_PERMISSION)) {
+            System.enqueueJob(new GuiltyReviewerGroupSyncJob(
+                userIds,
+                GuiltyReviewerGroupSyncJob.GroupAction.Remove
+            ));
+        }
     }
 }

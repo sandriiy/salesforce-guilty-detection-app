@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SharingRules xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sharingCriteriaRules>
+        <fullName>ReviewersOnlyOngoingProcesses</fullName>
+        <accessLevel>Read</accessLevel>
+        <description>Share with Reviewers only those processes that are in the &quot;Ongoing&quot; stage</description>
+        <label>Reviewers Only Ongoing Processes</label>
+        <sharedTo>
+            <group>GuiltyReviewers</group>
+        </sharedTo>
+        <criteriaItems>
+            <field>Status__c</field>
+            <operation>equals</operation>
+            <value>Ongoing</value>
+        </criteriaItems>
+        <includeRecordsOwnedByAll>true</includeRecordsOwnedByAll>
+    </sharingCriteriaRules>
+</SharingRules>

@@ -2,6 +2,7 @@
 <CompactLayout xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>GuiltyDefault</fullName>
     <fields>Name</fields>
-    <fields>ReviewProcessId__c</fields>
+    <fields>ReviewProcessName__c</fields>
+    <fields>Assessment__c</fields>
     <label>Guilty Default</label>
 </CompactLayout>
