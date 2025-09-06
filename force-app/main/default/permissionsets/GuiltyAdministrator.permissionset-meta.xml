@@ -78,6 +78,16 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>false</editable>
+        <field>ReviewProcess__c.isFieldsForReviewCompleted__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>ReviewProcess__c.isFilterCriteriaCompleted__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>true</editable>
         <field>ReviewProcess__c.isIncompleteExpandable__c</field>
         <readable>true</readable>
@@ -85,6 +95,11 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>ReviewProcess__c.isNotFulfilled__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>ReviewProcess__c.isTimelineCompleted__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <hasActivationRequired>false</hasActivationRequired>
