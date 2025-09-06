@@ -17,6 +17,9 @@ export default class ReviewProcessViewer extends LightningElement {
     @track totalNumberOfReviewers = DEFAULT_EMPTY
     @track nextStep = DEFAULT_EMPTY
     @track nextStepStyle;
+    nextStepResult;
+    channelName = '/data/ReviewProcess__ChangeEvent';
+    subscription = {};
 
     @wire(getRecord, { recordId: '$recordId', fields: FIELDS })
     recordHandler({ error, data }) {
@@ -26,11 +29,15 @@ export default class ReviewProcessViewer extends LightningElement {
                 this.totalNumberOfRecords = totalRecords;
             }
         }
-        if(error) {
-          console.error(error);
+        else if (error) {
+            showToast(
+                this,
+                'Failed to display summary information.',
+                'Please contact your System Administrator',
+                'error'
+            );
         }
     }
-    nextStepResult;
 
     @wire(getNextStep, { reviewProcessId: '$recordId' })
     nextStepHandler(value) {
@@ -41,42 +48,90 @@ export default class ReviewProcessViewer extends LightningElement {
         }
     }
 
-    channelName = '/data/ReviewProcess__ChangeEvent';
-    subscription = {};
-
     connectedCallback() {
         this.registerErrorListener();
         this.registerSubscribe();
-      }
-    
-      disconnectedCallback() {
-        unsubscribe(this.subscription, () => console.log('Unsubscribed to change events.'));
-      }
-    
-      registerErrorListener() {
+    }
+
+    disconnectedCallback() {
+        unsubscribe(this.subscription, () => {
+            console.log('Unsubscribed to change events.'); //TODO: Add meaningful log/toast message.
+        });
+    }
+
+    registerErrorListener() {
         onError(error => {
-          console.error('Salesforce error', JSON.stringify(error));
+            console.error('Salesforce error', JSON.stringify(error)); //TODO: Add meaningful log/toast message.
         });
-      }
-    
-      registerSubscribe() {
+    }
+
+    registerSubscribe() {
         const changeEventCallback = changeEvent => {
-          this.processChangeEvent(changeEvent);
+            this.processChangeEvent(changeEvent);
         };
-    
+
         subscribe(this.channelName, -1, changeEventCallback).then(subscription => {
-          this.subscription = subscription;
+            this.subscription = subscription;
         });
-      }
-    
-      processChangeEvent(changeEvent) {
+    }
+
+    processChangeEvent(changeEvent) {
         try {
-          const recordIds = changeEvent.data.payload.ChangeEventHeader.recordIds;
-          if (recordIds.includes(this.recordId)) {
-            refreshApex(this.nextStepResult);
-          }
+            const recordIds = changeEvent.data.payload.ChangeEventHeader.recordIds;
+            if (recordIds.includes(this.recordId)) {
+                refreshApex(this.nextStepResult);
+            }
         } catch (err) {
-          console.error(err);
+            console.error(err); //TODO: Add meaningful log/toast message.
         }
-      }
+    }
+
+    handleNextStepClick() {
+        switch (this.nextStep) {
+            case 'Define Type & Filter':
+                showToast(
+                    this,
+                    'Define Type & Filter',
+                    'Go to the "Config" tab to specify the type of records and filtering.',
+                    'warning'
+                );
+                break;
+
+            case 'Define Review Fields':
+                showToast(
+                    this,
+                    'Define Review Fields',
+                    'Go to the "Config" tab to specify the list of fields for review.',
+                    'warning'
+                );
+                break;
+
+            case 'Define Start/End Dates':
+                showToast(
+                    this,
+                    'Define Start/End Dates',
+                    'In the "Details" tab, specify the start and end dates of this review process.',
+                    'warning'
+                );
+                break;
+
+            case 'Good To Go':
+                showToast(
+                    this,
+                    'Good To Go',
+                    'You have completed the configuration steps. Review process is ready to begin.',
+                    'success'
+                );
+                break;
+
+            default:
+                showToast(
+                    this,
+                    'Next Step Error',
+                    'An error occurred while determining the next step.',
+                    'error'
+                );
+                break;
+        }
+    }
 }
