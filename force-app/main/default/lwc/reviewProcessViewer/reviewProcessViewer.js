@@ -8,6 +8,7 @@ import getNextStep from '@salesforce/apex/ReviewProcessController.getReviewProce
 import TOTAL_REVIEWABLE_FIELD from '@salesforce/schema/ReviewProcess__c.TotalReviewableRecords__c';
 
 const DEFAULT_EMPTY = 'N/A';
+const CHANGE_EVENT_CHANNEL = '/data/ReviewProcess__ChangeEvent';
 const FIELDS = [TOTAL_REVIEWABLE_FIELD];
 export default class ReviewProcessViewer extends LightningElement {
     @api recordId;
@@ -18,7 +19,9 @@ export default class ReviewProcessViewer extends LightningElement {
     @track nextStep = DEFAULT_EMPTY
     @track nextStepStyle;
     nextStepResult;
-    channelName = '/data/ReviewProcess__ChangeEvent';
+    messageType;
+    helpText = DEFAULT_EMPTY;
+    channelName = CHANGE_EVENT_CHANNEL;
     subscription = {};
 
     @wire(getRecord, { recordId: '$recordId', fields: FIELDS })
@@ -44,6 +47,8 @@ export default class ReviewProcessViewer extends LightningElement {
         this.nextStepResult = value;
         if (value.data) {
             this.nextStep = value.data.name;
+            this.messageType = value.data.messageType;
+            this.helpText = value.data.helpText;
             this.nextStepStyle = value.data.isReady ? 'color: #6cc230;' : 'color: #c03030;';
         }
     }
@@ -87,51 +92,11 @@ export default class ReviewProcessViewer extends LightningElement {
     }
 
     handleNextStepClick() {
-        switch (this.nextStep) {
-            case 'Define Type & Filter':
-                showToast(
-                    this,
-                    'Define Type & Filter',
-                    'Go to the "Config" tab to specify the type of records and filtering.',
-                    'warning'
-                );
-                break;
-
-            case 'Define Review Fields':
-                showToast(
-                    this,
-                    'Define Review Fields',
-                    'Go to the "Config" tab to specify the list of fields for review.',
-                    'warning'
-                );
-                break;
-
-            case 'Define Start/End Dates':
-                showToast(
-                    this,
-                    'Define Start/End Dates',
-                    'In the "Details" tab, specify the start and end dates of this review process.',
-                    'warning'
-                );
-                break;
-
-            case 'Good To Go':
-                showToast(
-                    this,
-                    'Good To Go',
-                    'You have completed the configuration steps. Review process is ready to begin.',
-                    'success'
-                );
-                break;
-
-            default:
-                showToast(
-                    this,
-                    'Next Step Error',
-                    'An error occurred while determining the next step.',
-                    'error'
-                );
-                break;
-        }
+        showToast(
+            this,
+            this.nextStep,
+            this.helpText,
+            this.messageType
+        );
     }
 }
