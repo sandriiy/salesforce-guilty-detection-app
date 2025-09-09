@@ -69,22 +69,30 @@ public with sharing class ReviewProcessController {
         if (String.isBlank(reviewProcess.FilterCriteria__c)) {
             return new ReviewProcessNextStepDTO(
                 'Define Type & Filter',
-                false
+                false,
+                'warning',
+                'Go to the "Config" tab to specify the type of records and filtering.'
             );
         } else if (String.isBlank(reviewProcess.FieldsForReview__c)) {
             return new ReviewProcessNextStepDTO(
                 'Define Review Fields',
-                false
+                false,
+                'warning',
+                'Go to the "Config" tab to specify the list of fields for review.'
             );
         } else if (reviewProcess.StartDateTime__c == null || reviewProcess.EndDateTime__c == null) {
             return new ReviewProcessNextStepDTO(
                 'Define Start/End Dates',
-                false
+                false,
+                'warning',
+                'In the "Details" tab, specify the start and end dates of this review process.'
             );
         } else {
             return new ReviewProcessNextStepDTO(
                 'Good To Go',
-                true
+                true,
+                'success',
+                'You have completed the configuration steps. Review process is ready to begin.'
             );
         }
     }
