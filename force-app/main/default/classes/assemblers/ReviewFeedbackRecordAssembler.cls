@@ -31,6 +31,8 @@ public with sharing class ReviewFeedbackRecordAssembler {
                 feedbackItemDTO.id = feedbackItem.Id;
                 feedbackItemDTO.fieldName = feedbackItem.Name;
                 feedbackItemDTO.fieldType = feedbackItem.Type__c;
+				feedbackItemDTO.comment = feedbackItem.Comment__c;
+				feedbackItemDTO.assessment = feedbackItem.Assessment__c;
                 feedbackItemDTO.instructions = feedbackItem.Instructions__c;
                 feedbackItemDTO.value = (targetRecord != null) ? targetRecord.get(feedbackItem.Name) : null;
                 dto.items.add(feedbackItemDTO);

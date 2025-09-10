@@ -26,7 +26,8 @@
                             <p class="slds-text-body_regular slds-m-bottom_small">{feedbackField.fieldName}</p>
 
                             <p class="slds-text-title_caps">Value</p>
-                            <p class="slds-text-body_regular slds-m-bottom_small wrappable-text">{feedbackField.value}</p>
+                            <p lwc:if={feedbackField.value} class="slds-text-body_regular slds-m-bottom_small wrappable-text">{feedbackField.value}</p>
+                            <p lwc:else class="slds-text-body_regular slds-m-bottom_small wrappable-text">-</p>
 
                             <template lwc:if={feedbackField.instructions}>
                                 <p class="slds-text-title_caps">Instructions</p>
@@ -39,7 +40,7 @@
                                 name={feedbackField.id}
                                 variant="label-hidden"
                                 options={validationOptions}
-                                value={feedbackField.validation}
+                                value={feedbackField.assessment}
                                 onchange={handleFieldValidationChange}
                                 type="button"
                                 class="slds-m-bottom_small">

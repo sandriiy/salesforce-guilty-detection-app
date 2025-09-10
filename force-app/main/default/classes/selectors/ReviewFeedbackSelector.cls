@@ -5,7 +5,7 @@ public with sharing class ReviewFeedbackSelector {
                 isReviewed__c, ReviewerId__c, AdditionalComment__c,
                 ReviewProcessId__r.ReviewInstructions__c,
                 (
-                    SELECT Id, Name, Type__c, Instructions__c
+                    SELECT Id, Name, Type__c, Instructions__c, Comment__c, Assessment__c
                     FROM ReviewFeedbackItems__r
                     ORDER BY Name
                 )
