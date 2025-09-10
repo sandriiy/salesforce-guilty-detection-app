@@ -44,6 +44,30 @@ export const BOOLEAN_AS_PICKLIST_VALUES = [
     { label: 'No', value: 'no' },
 ];
 
+export const GUILTY_REVIEWER_ROLE_NAME = 'Reviewer';
+export const GUILTY_ADMIN_ROLE_NAME = 'Admin';
+export const GUILTY_BOTH_ROLE_NAME = 'Both';
+
+export const GUILTY_ROLE_OPTIONS = [
+        { label: GUILTY_ADMIN_ROLE_NAME, value: GUILTY_ADMIN_ROLE_NAME },
+        { label: GUILTY_REVIEWER_ROLE_NAME, value: GUILTY_REVIEWER_ROLE_NAME },
+        { label: GUILTY_BOTH_ROLE_NAME, value: GUILTY_BOTH_ROLE_NAME }
+    ];
+
+export const STATUSES_GRAPH_COLOR_MAP = {
+    Draft: '#9e9e9e',
+    Pending: '#f4b400',
+    Ongoing: '#0070d2',
+    Completed: '#2e844a',
+    Overdue: '#fb8c00'
+};
+
+export const PROGRESS_GRAPH_COLOR_MAP = {
+    Low: '#f5a623',
+    Medium: '#0070d2',
+    High: '#28a745'
+};
+
 const showToast = (context, title, message, variant = 'info', mode = 'dismissable') => {
     context.dispatchEvent(new ShowToastEvent({
         title,
@@ -106,4 +130,15 @@ const generateId = (length = 8) => {
         .slice(0, length);
 }
 
-export { showToast, isEmpty, getFieldTypeConditions, getFieldTypeForInput, generateId };
+const extractErrorMessage = (error) => {
+    let rawMessage =
+        error?.body?.message ||
+        error?.message ||
+        'Contact your System Administrator for assistance';
+
+    rawMessage = rawMessage.replace(/^System\.\w+Exception:\s*/i, '');
+    rawMessage = rawMessage.replace(/(\n|\\n).*$/, '').trim();
+    return rawMessage;
+}
+
+export { showToast, extractErrorMessage, isEmpty, getFieldTypeConditions, getFieldTypeForInput, generateId };

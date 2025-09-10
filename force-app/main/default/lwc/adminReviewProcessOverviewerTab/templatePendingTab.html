@@ -1,0 +1,65 @@
+<template>
+    <div class="slds-grid slds-grid_vertical overview-content-data-tab">
+        <template lwc:if={filteredRecords.length} for:each={filteredRecords} for:item="record">
+            <c-guilty-accordion key={record.Id} data-id={record.Id} name={record.Name} total={record.TotalReviewableRecords__c} positive={record.PositiveFeedbackAmount__c} negative={record.NegativeFeedbackAmount__c}>
+                <div class="slds-border_top slds-m-bottom_medium"></div>
+                <div class="slds-text-align_center">
+                    <h2 class="title slds-m-top_small">HEADER STATUS</h2>
+                    <p class="message slds-m-top_x-small">
+                        HEADER HELP TEXT
+                    </p>
+                </div>
+
+                <div class="slds-card__body slds-card__body_inner summary-container">
+                    <div class="slds-grid slds-wrap slds-gutters_medium">
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                            <div class="summary-box">
+                                <p class="label">Start Date</p>
+                                <p class="value">September 1, 2025</p>
+                                <p class="change positive">You Can Start It Now</p>
+                            </div>
+                        </div>
+
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                            <div class="summary-box">
+                                <p class="label">End Date</p>
+                                <p class="value">October 1, 2025</p>
+                                <p class="change positive">Expandable When Incomplete</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slds-text-align_center slds-m-top_medium">
+                    <lightning-button
+                        label="Start Review Process"
+                        variant="brand"
+                        class="slds-m-around_x-small"
+                        style="min-width: 180px;"
+                    ></lightning-button>
+                    <lightning-button
+                        label="View Review Process"
+                        variant="neutral"
+                        class="slds-m-around_x-small"
+                        style="min-width: 180px;"
+                        onclick={handleViewClick}
+                    ></lightning-button>
+                </div>
+
+                <div class="review-details">
+                    <div class="review-detail">
+                        <lightning-icon icon-name="utility:metrics" alternative-text="Records" size="xx-small"></lightning-icon>
+                        <span>5154 Records</span>
+                    </div>
+                    <div class="review-detail">
+                        <lightning-icon icon-name="utility:standard_objects" alternative-text="Fields" size="xx-small"></lightning-icon>
+                        <span>15 Fields</span>
+                    </div>
+                </div>
+            </c-guilty-accordion>
+        </template>
+        <template lwc:else>
+            <div class="slds-m-top_x-small">No records found. Try adjusting your filter criteria</div>
+        </template>
+    </div>
+</template>

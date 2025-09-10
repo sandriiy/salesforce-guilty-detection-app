@@ -1,0 +1,64 @@
+<template>
+    <div class="slds-p-around_small">
+        <div class="slds-grid slds-wrap slds-gutters">
+            <!-- Total Reviews -->
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
+                <div class="slds-card slds-p-around_medium slds-text-align_center">
+                    <header class="slds-text-title_caps slds-m-bottom_x-small">Total Reviews</header>
+                    <div class="slds-text-heading_large">{totalReviews}</div>
+                </div>
+            </div>
+
+            <!-- Total Feedback -->
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
+                <div class="slds-card slds-p-around_medium slds-text-align_center">
+                    <header class="slds-text-title_caps slds-m-bottom_x-small">Total Feedback</header>
+                    <div class="slds-text-heading_large">{totalFeedback}</div>
+                </div>
+            </div>
+
+            <!-- Total Records -->
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
+                <div class="slds-card slds-p-around_medium slds-text-align_center">
+                    <header class="slds-text-title_caps slds-m-bottom_x-small">Total Records</header>
+                    <div class="slds-text-heading_large">{totalRecords}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-container slds-p-around_medium slds-m-top_small">
+            <div class="slds-grid slds-gutters slds-m-bottom_medium">
+                <!-- TODO: ADD FILTERS AND SEARCH FOR A SPECIFIC REVIEW PROCESS -->
+            </div>
+            <div class="slds-grid">
+                <div class="slds-col slds-size_1-of-1">
+                    <div>
+                        <template for:each={allGraphs} for:item="graph" for:index="index">
+                            <div lwc:if={graph.visible} key={graph.id} class="graph-container slds-box slds-theme_shade slds-m-bottom_medium">
+                                <canvas data-id={graph.id} class="chart-canvas" lwc:dom="manual"></canvas>
+                            </div>
+                        </template>
+                    </div>
+
+                    <div class="slds-grid slds-grid_align-center carousel-nav">
+                        <template for:each={allGraphs} for:item="graph" for:index="index">
+                            <div key={graph.id} class="dot-wrapper">
+                                <input
+                                    title={graph.title}
+                                    type="radio"
+                                    name="graph-nav"
+                                    id={graph.id}
+                                    value={index}
+                                    checked={graph.visible}
+                                    onchange={handleDotChange}
+                                    class="carousel-dot"/>
+                                <label for={graph.id}></label>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</template>

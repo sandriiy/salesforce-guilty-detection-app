@@ -1,0 +1,41 @@
+.summary-box {
+    background-color: #f9f9f9;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    text-align: center;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.summary-box .label {
+    font-size: 0.875rem;
+    color: #6b6b6b;
+    margin-bottom: 0.5rem;
+}
+
+.summary-box .value {
+    font-size: 1.6rem;
+    font-weight: 500;
+    color: #181818;
+}
+
+.summary-box .value.clickable {
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.summary-box .value.truncate-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.summary-help {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+}

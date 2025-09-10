@@ -1,0 +1,27 @@
+<template>
+    <div class="summarizier-container slds-grid slds-theme_default">
+        <nav class="summarizer-sidebar">
+            <ul>
+                <template for:each={tabs} for:item="tab">
+                    <li key={tab.id} data-id={tab.id} class={tab.computedClass} onclick={handleTabClick}>
+                        <a>
+                            <lightning-icon icon-name={tab.icon} size="x-small" class="summarizer-sidebar-icon"></lightning-icon>
+                            <span class="summarizer-sidebar-item-text">{tab.label}</span>
+                        </a>
+                    </li>
+                </template>
+            </ul>
+        </nav>
+
+        <div class="slds-p-around_medium slds-col slds-grid_align-center summarizer-content">
+            <div class="slds-box slds-box_xx-large slds-theme_default summarizer-box">
+                <template lwc:if={isDashboard}>
+                    <c-admin-review-process-dashboard></c-admin-review-process-dashboard>
+                </template>
+                <template lwc:elseif={isOverview}>
+                    <c-admin-review-process-overviewer></c-admin-review-process-overviewer>
+                </template>
+            </div>
+        </div>
+    </div>
+</template>

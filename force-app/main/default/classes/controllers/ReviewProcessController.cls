@@ -1,9 +1,10 @@
-public class ReviewProcessController {
+public with sharing class ReviewProcessController {
     @AuraEnabled
     public static void saveReviewProcessFilter(Id reviewProcessId, String compiledData) {
         ReviewProcess__c reviewProcess = new ReviewProcess__c(
             Id = reviewProcessId,
-            FilterCriteria__c = compiledData
+            FilterCriteria__c = compiledData,
+            isFilterCriteriaCompleted__c = true
         );
 
         try {
@@ -18,7 +19,8 @@ public class ReviewProcessController {
     public static void saveReviewProcessFields(Id reviewProcessId, String compiledData) {
         ReviewProcess__c reviewProcess = new ReviewProcess__c(
             Id = reviewProcessId,
-            FieldsForReview__c = compiledData
+            FieldsForReview__c = compiledData,
+            isFieldsForReviewCompleted__c = true
         );
 
         try {
@@ -26,6 +28,72 @@ public class ReviewProcessController {
         } catch (DMLException ex) {
             // log
             System.debug(ex.getMessage());
+        }
+    }
+
+    @AuraEnabled
+    public static void moveReviewProcessToNextStage(Id reviewProcessId, String newStatus) {
+        ReviewProcess__c reviewProcess = new ReviewProcess__c(
+            Id = reviewProcessId,
+            Status__c = newStatus
+        );
+
+        try {
+            update reviewProcess;
+        } catch (DMLException ex) {
+            // log
+            System.debug(ex.getMessage());
+        }
+    }
+
+    @AuraEnabled
+    public static List<String> verifyReviewProcessReadiness(Id reviewProcessId) {
+        List<String> errors = new List<String>();
+        ReviewProcess__c reviewProcess = new ReviewProcessSelector().selectById(reviewProcessId);
+
+        if (reviewProcess.StartDateTime__c < System.now()) {
+            errors.add('Start Date/Time cannot be in the past');
+        }
+
+        if (reviewProcess.EndDateTime__c < System.now()) {
+            errors.add('End Date/Time cannot be in the past');
+        }
+
+        return errors;
+    }
+
+    @AuraEnabled(cacheable=true)
+    public static ReviewProcessNextStepDTO getReviewProcessNextStep(Id reviewProcessId) {
+        ReviewProcess__c reviewProcess = new ReviewProcessSelector().selectById(reviewProcessId);
+
+        if (String.isBlank(reviewProcess.FilterCriteria__c)) {
+            return new ReviewProcessNextStepDTO(
+                'Define Type & Filter',
+                false,
+                'warning',
+                'Go to the "Config" tab to specify the type of records and filtering.'
+            );
+        } else if (String.isBlank(reviewProcess.FieldsForReview__c)) {
+            return new ReviewProcessNextStepDTO(
+                'Define Review Fields',
+                false,
+                'warning',
+                'Go to the "Config" tab to specify the list of fields for review.'
+            );
+        } else if (reviewProcess.StartDateTime__c == null || reviewProcess.EndDateTime__c == null) {
+            return new ReviewProcessNextStepDTO(
+                'Define Start/End Dates',
+                false,
+                'warning',
+                'In the "Details" tab, specify the start and end dates of this review process.'
+            );
+        } else {
+            return new ReviewProcessNextStepDTO(
+                'Good To Go',
+                true,
+                'success',
+                'You have completed the configuration steps. Review process is ready to begin.'
+            );
         }
     }
 

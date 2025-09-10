@@ -1,5 +1,6 @@
 import { LightningElement, api, track } from 'lwc';
 
+import { keyboardUndoRedoUtils } from 'c/keyboardUndoRedoUtils';
 import getSobjectFields from '@salesforce/apex/ReviewProcessController.getAllSObjectFields';
 import { showToast, isEmpty, getFieldTypeForInput, generateId } from 'c/utils';
 
@@ -7,6 +8,7 @@ export default class ReviewProcessFieldPicker extends LightningElement {
     @api record;
     @api stepKey;
 
+    isKeyboardRegistered = false;
     isLoading = false;
     isIncompleteStep = false;
 
@@ -21,6 +23,18 @@ export default class ReviewProcessFieldPicker extends LightningElement {
         this.isLoading = false;
     }
 
+    renderedCallback() {
+        const fieldsContainer = this.refs.fieldsContainer;
+        if (!this.isKeyboardRegistered && !isEmpty(fieldsContainer)) {
+            this.resolveRedoUndoTracking(fieldsContainer);
+            this.isKeyboardRegistered = true;
+        }
+    }
+
+    disconnectedCallback() {
+        keyboardUndoRedoUtils.unregister(this);
+    }
+
     handleFieldChange(event) {
         const newField = event.target.value;
 
@@ -29,6 +43,7 @@ export default class ReviewProcessFieldPicker extends LightningElement {
 
         let selectedField = this.selectedFields[parentContainerIndex];
         selectedField.field = newField;
+        keyboardUndoRedoUtils.pushState(this);
     }
 
     handleFieldInstructionsChange(event) {
@@ -39,16 +54,19 @@ export default class ReviewProcessFieldPicker extends LightningElement {
 
         let selectedField = this.selectedFields[parentContainerIndex];
         selectedField.helptext = newInstructions;
+        keyboardUndoRedoUtils.pushState(this);
     }
 
     handleAddNewField(event) {
         this.addNewField();
+        keyboardUndoRedoUtils.pushState(this);
     }
 
     handleRemoveField(event) {
         const parentContainer = event.target.closest('div[data-index]');
         const parentContainerIndex = parentContainer.getAttribute('data-index');
         this.selectedFields.splice(parentContainerIndex, 1);
+        keyboardUndoRedoUtils.pushState(this);
     }
 
     handleFieldsStepBack(event) {
@@ -96,6 +114,18 @@ export default class ReviewProcessFieldPicker extends LightningElement {
                 this.reviewObject = undefined;
                 console.error(error);
             });
+    }
+
+    resolveRedoUndoTracking(container) {
+        keyboardUndoRedoUtils.register(this, {
+            element: container,
+            getState: () => ({
+                selectedFields: this.selectedFields
+            }),
+            setState: (state) => {
+                this.selectedFields = [...state.selectedFields]
+            }
+        });
     }
 
     filterSobjectFieldOptions(fields) {

@@ -1,0 +1,138 @@
+.reviewer-container {
+    padding: 0.5rem 0;
+    max-width: 99%;
+    margin: 0 auto;
+}
+
+.reviewer-card {
+    background: #f3f6fb;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+    padding: 1rem 1.5rem;
+    margin-bottom: 0.5rem;
+    transition: none;
+}
+
+.reviewer-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+}
+
+.reviewer-tags {
+    margin: auto 0 auto auto;
+}
+
+.reviewer-tag {
+    background-color: rgb(54, 61, 77);
+    color: #ffffff;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    margin: auto;
+}
+
+.reviewer-body {
+    margin-top: 0.5rem;
+}
+
+.reviewer-stats {
+    display: flex;
+	flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.new-review-button { 
+    --slds-c-button-brand-color-background: rgb(54, 61, 77);
+    --slds-c-button-brand-color-border: rgb(54, 61, 77);
+    --slds-c-button-brand-color-background-hover: #000000;
+    --slds-c-button-brand-color-border-hover: #000000;
+}
+
+.new-review-button:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.reviewer-stat {
+    flex: 1;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    text-align: center;
+    background-color: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.reviewer-value {
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 0.25rem;
+    display: block;
+}
+
+.reviewer-label {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.pending-review-container {
+    max-height: 122px;
+    overflow-y: auto;
+}
+
+.pending-review-card {
+    background-color: #ffffff;
+    border-radius: 0.5rem;
+    margin-bottom: 0.75rem;
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.pending-review-name {
+    font-weight: 500;
+    font-size: 1rem;
+    color: #1b1b1b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-word;
+    margin-right: 1rem;
+}
+
+.pending-review-tag {
+    background-color: #e3f2fd;
+    color: #1976d2;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 1rem;
+    width: fit-content;
+}
+
+.continue-review-button {
+    background: none;
+    border: 1px solid #0070d2;
+    border-radius: 6px;
+    padding: 0.4rem 0.9rem;
+    color: #0070d2;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.continue-review-button:hover {
+    background-color: #f0f8ff;
+}
+
+.workspace-header {
+    width: 100%;
+    margin-bottom: 1rem;
+    padding: 0 0.5rem;
+}
+
+.workspace-header .search-container {
+    width: 100%;
+}

@@ -2,6 +2,7 @@
 <CustomTab xmlns="http://soap.sforce.com/2006/04/metadata">
     <description>Created by Lightning App Builder</description>
     <flexiPage>Find_The_Guilty_Admin</flexiPage>
+    <icon>FindTheGuiltyApp/GuiltyAdminIcon.png</icon>
     <label>Find The Guilty Admin</label>
-    <motif>Custom19: Wrench</motif>
+    <motif>Custom318: TV Widescreen</motif>
 </CustomTab>

@@ -128,10 +128,26 @@
     </actionOverrides>
     <actionOverrides>
         <actionName>View</actionName>
+        <comment>Action override created by Lightning App Builder during activation.</comment>
+        <content>Review_Process_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Flexipage</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <comment>Action override created by Lightning App Builder during activation.</comment>
+        <content>Review_Process_Record_Page</content>
+        <formFactor>Small</formFactor>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Flexipage</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
         <type>Default</type>
     </actionOverrides>
     <allowInChatterGroups>false</allowInChatterGroups>
-    <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
+    <compactLayoutAssignment>ReviewProcessDefault</compactLayoutAssignment>
     <deploymentStatus>Deployed</deploymentStatus>
     <description>Initialization of the records reviewing process with filtering of necessary data and fields.</description>
     <enableActivities>false</enableActivities>
@@ -146,7 +162,6 @@
     <externalSharingModel>Private</externalSharingModel>
     <label>Review Process</label>
     <nameField>
-        <encryptionScheme>None</encryptionScheme>
         <label>Review Process Name</label>
         <trackHistory>false</trackHistory>
         <type>Text</type>
@@ -162,6 +177,6 @@
         <excludedStandardButtons>PrintableListView</excludedStandardButtons>
         <excludedStandardButtons>ChangeOwner</excludedStandardButtons>
     </searchLayouts>
-    <sharingModel>ReadWrite</sharingModel>
+    <sharingModel>Private</sharingModel>
     <visibility>Public</visibility>
 </CustomObject>

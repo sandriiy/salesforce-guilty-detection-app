@@ -8,18 +8,6 @@
     <type>Picklist</type>
     <valueSet>
         <restricted>true</restricted>
-        <valueSetDefinition>
-            <sorted>false</sorted>
-            <value>
-                <fullName>Draft</fullName>
-                <default>true</default>
-                <label>Draft</label>
-            </value>
-            <value>
-                <fullName>Submitted</fullName>
-                <default>false</default>
-                <label>Submitted</label>
-            </value>
-        </valueSetDefinition>
+        <valueSetName>GuiltyReviewProcessStatutes</valueSetName>
     </valueSet>
 </CustomField>

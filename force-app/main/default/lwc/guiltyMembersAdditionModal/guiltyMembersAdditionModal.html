@@ -1,0 +1,88 @@
+<template>
+    <lightning-modal-header label={label}></lightning-modal-header>
+    <lightning-modal-body>
+        <div class="slds-grid slds-wrap slds-p-around_medium">
+            <lightning-spinner lwc:if={isLoading} alternative-text="Loading" size="small"></lightning-spinner>
+            <div class="slds-col slds-box selected-users slds-size_12-of-12 slds-medium-size_3-of-12">
+                <h2 class="slds-text-heading_small slds-m-bottom_small">Selected Users</h2>
+                <template lwc:if={selectedUsers.length}>
+                    <template for:each={selectedUsers} for:item="user">
+                        <div key={user.id} class="slds-grid slds-p-vertical_x-small slds-border_bottom">
+                            <div class="slds-col">
+                                <div>{user.name}</div>
+                                <div class="slds-text-body_small slds-text-color_weak">{user.type}</div>
+                            </div>
+                            <div class="slds-col_bump-right slds-grid slds-grid_vertical-align-center slds-text-align_right">
+                                <lightning-button-icon
+                                    class="remove-selected-user-button" 
+                                    icon-name="utility:close"
+                                    alternative-text="Remove"
+                                    onclick={handleRemoveUser}
+                                    data-id={user.id}>
+                                </lightning-button-icon>
+                            </div>
+                        </div>
+                </template>
+                </template>
+                <template lwc:else>
+                    <p class="slds-text-body_regular">No users selected.</p>
+                </template>
+            </div>
+
+            <div class="slds-col slds-size_12-of-12 slds-medium-size_9-of-12 available-users">
+                <div class="slds-grid slds-grid_vertical slds-m-bottom_medium slds-m-left_medium">
+                    <div class="slds-col slds-grid">
+                        <div class="slds-col slds-m-right_small">
+                            <lightning-combobox
+                                label="Filter by Profile"
+                                value={selectedProfile}
+                                options={profileOptions}
+                                onchange={handleProfileFilter}>
+                            </lightning-combobox>
+                        </div>
+                        <div class="slds-col">
+                            <lightning-combobox
+                                label="Filter by Role"
+                                value={selectedRole}
+                                options={roleOptions}
+                                onchange={handleRoleFilter}>
+                            </lightning-combobox>
+                        </div>
+                    </div>
+                    <div class="slds-col">
+                        <lightning-input label="Search Available Users" type="text" value={searchKey} onchange={handleSearch}></lightning-input>
+                    </div>
+                </div>
+
+                <div class="slds-box slds-m-left_medium">
+                    <h2 class="slds-text-heading_small slds-m-bottom_small">Available Users</h2>
+                    <template lwc:if={filteredUsers.length}>
+                        <lightning-datatable
+                            key-field="id"
+                            data={filteredUsers}
+                            columns={columns}
+                            hide-checkbox-column
+                            onrowaction={handleAddUser}>
+                        </lightning-datatable>
+                    </template>
+                    <template lwc:else>
+                        <p class="slds-align_absolute-center slds-m-top_x-small">No Records Found</p>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </lightning-modal-body>
+    <lightning-modal-footer>
+        <lightning-button 
+            class="slds-m-right_x-small"
+            label="Cancel" 
+            onclick={handleCancel}>
+        </lightning-button>
+        <lightning-button 
+            label="Save" 
+            variant="neutral" 
+            class="add-members-button"
+            onclick={handleAddMembers}>
+        </lightning-button>
+    </lightning-modal-footer>
+</template>

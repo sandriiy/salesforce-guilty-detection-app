@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ValidityDateTimeRange</fullName>
+    <active>true</active>
+    <errorConditionFormula>OR(
+    StartDateTime__c &gt; EndDateTime__c,
+    StartDateTime__c &lt;= NOW(),
+    EndDateTime__c &lt;= NOW()
+)</errorConditionFormula>
+    <errorMessage>Start and End Date/Time must be in the future, and Start must not be before End.</errorMessage>
+</ValidationRule>

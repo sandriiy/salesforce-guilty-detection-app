@@ -1,0 +1,52 @@
+.guilty-container {
+    background: #f3f6fb;
+    border-radius: 0.5rem;
+}
+
+.accordion-header {
+    cursor: pointer;
+}
+
+.progress-ring {
+    width: 40px;
+    height: 40px;
+}
+
+.circular-chart {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.circle-bg {
+    fill: none;
+    stroke: #eee;
+    stroke-width: 3.8;
+}
+
+.circle {
+    fill: none;
+    stroke: orange;
+    stroke-width: 2.8;
+    stroke-linecap: round;
+    transform: rotate(-90deg);
+    transform-origin: center;
+    transition: stroke-dasharray 0.3s;
+}
+
+.percentage {
+    font-family: sans-serif;
+    font-size: 0.5rem;
+    text-anchor: middle;
+}
+
+.positive {
+    color: green;
+    --slds-c-icon-color-foreground-default: green;
+}
+
+.negative {
+    color: red;
+    --slds-c-icon-color-foreground-default: red;
+}

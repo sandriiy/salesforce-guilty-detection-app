@@ -4,7 +4,31 @@
         <application>Find_the_Guilty</application>
         <visible>true</visible>
     </applicationVisibilities>
+    <classAccesses>
+        <apexClass>GuiltyReviewerController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
     <description>Allows analyzing and evaluating assigned records for the &apos;Find The Guilty&apos; application, including the ability to determine data completeness according to the instructions and provide a final assessment.</description>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>ReviewFeedbackItem__c.Assessment__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>ReviewFeedbackItem__c.Comment__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>ReviewFeedbackItem__c.Instructions__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>ReviewFeedbackItem__c.Type__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
         <field>ReviewFeedback__c.AdditionalComment__c</field>
@@ -16,13 +40,18 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>true</editable>
-        <field>ReviewFeedback__c.RecordId__c</field>
+        <editable>false</editable>
+        <field>ReviewFeedback__c.ReviewProcessName__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>true</editable>
+        <editable>false</editable>
         <field>ReviewFeedback__c.ReviewerId__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>ReviewFeedback__c.isReviewed__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -45,11 +74,26 @@
         <field>ReviewProcess__c.Status__c</field>
         <readable>true</readable>
     </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>ReviewProcess__c.TotalReviewableRecords__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
     <hasActivationRequired>false</hasActivationRequired>
     <label>Guilty Reviewer</label>
     <objectPermissions>
         <allowCreate>true</allowCreate>
-        <allowDelete>true</allowDelete>
+        <allowDelete>false</allowDelete>
+        <allowEdit>true</allowEdit>
+        <allowRead>true</allowRead>
+        <modifyAllRecords>false</modifyAllRecords>
+        <object>ReviewFeedbackItem__c</object>
+        <viewAllFields>false</viewAllFields>
+        <viewAllRecords>false</viewAllRecords>
+    </objectPermissions>
+    <objectPermissions>
+        <allowCreate>true</allowCreate>
+        <allowDelete>false</allowDelete>
         <allowEdit>true</allowEdit>
         <allowRead>true</allowRead>
         <modifyAllRecords>false</modifyAllRecords>

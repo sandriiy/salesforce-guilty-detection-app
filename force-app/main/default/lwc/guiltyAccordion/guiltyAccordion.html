@@ -1,0 +1,48 @@
+<template>
+    <div class="slds-box slds-p-around_medium slds-m-bottom_small guilty-container">
+        <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center accordion-header" onclick={toggleSection}>
+            <!-- Left Section: Score ring + title -->
+            <div class="slds-grid slds-grid_vertical-align-center">
+                <div class="progress-ring">
+                    <svg viewBox="0 0 36 36" class="circular-chart">
+                        <path class="circle-bg"
+                              d="M18 2.0845
+                                 a 15.9155 15.9155 0 0 1 0 31.831
+                                 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                        <path class="circle"
+                              stroke-dasharray={dasharray}
+                              style={circleStyle}
+                              d="M18 2.0845
+                                 a 15.9155 15.9155 0 0 1 0 31.831
+                                 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                        <text x="18" y="53%" text-anchor="middle" dominant-baseline="middle" class="percentage">{score}</text>
+                    </svg>
+                </div>
+                <span class="slds-m-left_small slds-text-heading_small">{name}</span>
+            </div>
+
+            <!-- Right Section: Feedback icons + toggle button -->
+            <div class="slds-grid slds-grid_vertical-align-center">
+                <span class="slds-m-right_x-small" style={helpTextStyles}>{helpText}</span>
+                <span class="slds-m-horizontal_x-small positive">
+                    <lightning-icon icon-name="utility:smiley_and_people" size="xx-small"></lightning-icon> {positive}
+                </span>
+                <span class="slds-m-horizontal_x-small negative">
+                    <lightning-icon icon-name="utility:sentiment_negative" size="xx-small"></lightning-icon> {negative}
+                </span>
+
+                <lightning-button-icon 
+                    icon-name={toggleIcon}
+                    alternative-text="Toggle"
+                    variant="bare"
+                    size="medium"
+                    class="slds-m-left_small">
+                </lightning-button-icon>
+            </div>
+        </div>
+
+        <div if:true={isAccordionOpen} class="slds-m-top_small">
+            <slot></slot>
+        </div>
+    </div>
+</template>

@@ -1,0 +1,21 @@
+.overview-content-data-tab {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.title {
+    color: #2e8540;
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.message {
+    font-size: 0.95rem;
+    color: #5c5e62;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.status-list span {
+    vertical-align: middle;
+}
