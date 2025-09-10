@@ -49,14 +49,25 @@ export default class ReviewerReviewProcessWorkspace extends LightningElement {
                 console.log(error);
             });
 
-        const result = await FeedbackRecordModal.open({
+        await FeedbackRecordModal.open({
             feedbackId: reviewFeedback.Id
         });
 
-        // ...
-
+		await refreshApex(this.wiredReviewsRef);
         this.isLoading = false;
     }
+
+	async handleContinueReview(event) {
+		const reviewFeedbackId = event.currentTarget.dataset.id;
+		this.isLoading = true;
+
+		await FeedbackRecordModal.open({
+            feedbackId: reviewFeedbackId
+        });
+
+		await refreshApex(this.wiredReviewsRef);
+        this.isLoading = false;
+	}
 
     prepareReviewProcesses(data) {
         return data.map(process => {

@@ -64,7 +64,7 @@
                                                 <span class="pending-review-tag">{feedback.RecordType__c}</span>
                                             </div>
                                             <div class="slds-col">
-                                                <button class="continue-review-button" onclick={handleContinueReview}>Continue</button>
+                                                <button data-id={feedback.Id} class="continue-review-button" onclick={handleContinueReview}>Continue</button>
                                             </div>
                                         </div>
                                     </template>
