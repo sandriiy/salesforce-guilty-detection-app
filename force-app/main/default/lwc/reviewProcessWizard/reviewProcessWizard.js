@@ -146,7 +146,8 @@ export default class ReviewProcessWizard extends LightningElement {
                 size: 'small',
                 content: 'You\'re viewing a preview of records based on your current setup.',
 				isConfigPreview: true,
-				isTotalRecords: true
+				isTotalRecords: true,
+				filters: compiledData
             });
 
             if (previewResult === 'okay') {

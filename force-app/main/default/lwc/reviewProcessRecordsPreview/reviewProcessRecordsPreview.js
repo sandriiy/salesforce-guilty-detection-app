@@ -2,6 +2,8 @@ import { api, track, wire } from 'lwc';
 import LightningModal from 'lightning/modal';
 import { showToast, isEmpty } from 'c/utils';
 import { refreshApex } from '@salesforce/apex';
+
+import { getIfUnchanged, save } from 'c/datatableCache';
 import getFilteredRecordsForDatatable from '@salesforce/apex/ReviewProcessController.getFilteredRecordsForDatatable';
 
 export default class ReviewProcessRecordsPreview extends LightningModal {
@@ -16,29 +18,39 @@ export default class ReviewProcessRecordsPreview extends LightningModal {
 	@track searchQuery;
     @track records = [];
     @track columns;
+	@track totalCount;
 
-	wiredRecordsResult;
-	@wire(getFilteredRecordsForDatatable, { reviewProcessId: '$reviewProcessId' })
-	wiredInfo(value) {
-		this.wiredRecordsResult = value;
-		refreshApex(this.wiredRecordsResult);
+	async connectedCallback() {
+		this.isLoading = true;
 
-		const { data, error } = value || {};
-		this.loading = false;
-
-		if (data) {
-			this.columns = data.columns;
-			this.records = data.records;
+		const cached = await getIfUnchanged(JSON.parse(this.filters));
+		if (cached) {
+			this.columns = cached.columns;
+			this.records = cached.records;
+			this.totalCount = cached.totalCount ?? 0;
 			this.isLoading = false;
-		} else if (error) {
+		} else {
+			await this.refreshFromServer();
+		}
+	}
+
+	async refreshFromServer() {
+		try {
+			const result = await getFilteredRecordsForDatatable({
+				reviewProcessId: this.reviewProcessId,
+			});
+			
+			this.columns = result.columns || [];
+			this.records = result.records || [];
+			this.totalCount = result.totalCount || 0;
+
+			await save(JSON.parse(this.filters), {
+				columns: this.columns,
+				records: this.records,
+				totalCount: this.totalCount
+			});
+		} finally {
 			this.isLoading = false;
-			console.log(error);
-			showToast(
-                this,
-                'Unable To Retrieve Records',
-                'Please try again or contact your System Administrator',
-                'error'
-            );
 		}
 	}
 
@@ -46,10 +58,6 @@ export default class ReviewProcessRecordsPreview extends LightningModal {
 		const value = event.target.value;
   		this.searchQuery = value;
 	}
-
-    get totalCount() {
-        return this.records.length;
-    }
 
 	get closeButtonTitle() {
 		return isEmpty(this.isConfigPreview)

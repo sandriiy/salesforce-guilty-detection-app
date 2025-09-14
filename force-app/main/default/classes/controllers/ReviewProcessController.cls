@@ -47,7 +47,7 @@ public with sharing class ReviewProcessController {
         return errors;
     }
 
-	@AuraEnabled(cacheable=true)
+	@AuraEnabled
 	public static LightningDatatableInfo getFilteredRecordsForDatatable(Id reviewProcessId) {
 		ReviewProcess__c reviewProcess = new ReviewProcessSelector().selectById(reviewProcessId);
 		ReviewProcessDataInterpreterService dataInterpreter = new ReviewProcessDataInterpreterService(reviewProcess);
