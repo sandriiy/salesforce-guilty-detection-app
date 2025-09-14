@@ -7,12 +7,7 @@ public with sharing class ReviewProcessController {
             isFilterCriteriaCompleted__c = true
         );
 
-        try {
-            update reviewProcess;
-        } catch (DMLException ex) {
-            // log
-            System.debug(ex.getMessage());
-        }
+        update reviewProcess; // TODO: Log this error
     }
 
     @AuraEnabled
@@ -23,12 +18,7 @@ public with sharing class ReviewProcessController {
             isFieldsForReviewCompleted__c = true
         );
 
-        try {
-            update reviewProcess;
-        } catch (DMLException ex) {
-            // log
-            System.debug(ex.getMessage());
-        }
+       	update reviewProcess; // TODO: Log this error
     }
 
     @AuraEnabled
@@ -38,12 +28,7 @@ public with sharing class ReviewProcessController {
             Status__c = newStatus
         );
 
-        try {
-            update reviewProcess;
-        } catch (DMLException ex) {
-            // log
-            System.debug(ex.getMessage());
-        }
+        update reviewProcess; // TODO: Log this error
     }
 
     @AuraEnabled
@@ -61,6 +46,21 @@ public with sharing class ReviewProcessController {
 
         return errors;
     }
+
+	@AuraEnabled(cacheable=true)
+	public static LightningDatatableInfo getFilteredRecordsForDatatable(Id reviewProcessId) {
+		ReviewProcess__c reviewProcess = new ReviewProcessSelector().selectById(reviewProcessId);
+		ReviewProcessDataInterpreterService dataInterpreter = new ReviewProcessDataInterpreterService(reviewProcess);
+
+		List<ReviewFilterCriteriaWrapper.FilterField> fields = dataInterpreter.extractAllFilterFields();
+		LightningDatatableInfo lightningResult = dataInterpreter.buildLightningColumnsAndCursor(fields);
+
+		List<SObject> records = Database.query(lightningResult.queryResult.soql);
+		lightningResult.records = records;
+		lightningResult.totalCount = records.size();
+
+		return lightningResult;
+	}
 
     @AuraEnabled(cacheable=true)
     public static ReviewProcessNextStepDTO getReviewProcessNextStep(Id reviewProcessId) {

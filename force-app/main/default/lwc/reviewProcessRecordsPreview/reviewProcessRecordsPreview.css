@@ -1,0 +1,15 @@
+.okay-button { 
+    --slds-c-button-brand-color-background: rgb(54, 61, 77);
+    --slds-c-button-brand-color-border: rgb(54, 61, 77);
+    --slds-c-button-brand-color-background-hover: #000000;
+    --slds-c-button-brand-color-border-hover: #000000;
+}
+
+.okay-button:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.records-table {
+	width: 100%;
+}

@@ -78,7 +78,7 @@ const showToast = (context, title, message, variant = 'info', mode = 'dismissabl
 };
 
 const isEmpty = (value) => {
-    return value === null || value === undefined || value === '' || (Array.isArray(value) && value.length === 0);
+    return value === null || value === undefined || value === '' || (Array.isArray(value) && value.length === 0 || value === false);
 };
 
 const getFieldTypeConditions = (fieldType) => {

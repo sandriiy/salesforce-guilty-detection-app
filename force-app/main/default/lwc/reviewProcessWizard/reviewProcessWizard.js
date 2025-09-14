@@ -2,7 +2,7 @@ import { LightningElement, api, track, wire } from 'lwc';
 import { getRecord } from "lightning/uiRecordApi";
 import { showToast, isEmpty, extractErrorMessage } from 'c/utils';
 
-import reviewProcessRecordPreview from 'c/reviewProcessRecordPreview';
+import reviewProcessRecordsPreview from 'c/reviewProcessRecordsPreview';
 import saveReviewProcessFilter from '@salesforce/apex/ReviewProcessController.saveReviewProcessFilter';
 import saveReviewProcessFields from '@salesforce/apex/ReviewProcessController.saveReviewProcessFields';
 
@@ -140,10 +140,13 @@ export default class ReviewProcessWizard extends LightningElement {
             await saveReviewProcessFilter({ reviewProcessId: this.recordId, compiledData: compiledData });
             showToast(this, 'Review Process Filtering Successfully Saved', '', 'success');
 
-            const previewResult = await reviewProcessRecordPreview.open({
+            const previewResult = await reviewProcessRecordsPreview.open({
+				reviewProcessId: this.recordId,
                 label: 'Filtered Records Preview',
                 size: 'small',
-                content: 'You\'re viewing a preview of records based on your current setup. This includes only a portion of all available records, feel free to load more fields for deeper analysis.',
+                content: 'You\'re viewing a preview of records based on your current setup.',
+				isConfigPreview: true,
+				isTotalRecords: true
             });
 
             if (previewResult === 'okay') {
