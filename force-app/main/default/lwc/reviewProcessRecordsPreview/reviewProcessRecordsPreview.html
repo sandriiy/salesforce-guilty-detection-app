@@ -3,8 +3,7 @@
 
     <lightning-modal-body>
         <lightning-spinner lwc:if={isLoading} alternative-text="Loading" size="small"></lightning-spinner>
-
-        <div class="slds-p-top_small slds-p-bottom_medium slds-text-align_center">
+        <div lwc:else class="slds-p-top_small slds-p-bottom_medium slds-text-align_center">
             <lightning-formatted-rich-text
                 class="slds-text-heading_small slds-p-horizontal_medium"
                 value={contentHtml}>
@@ -12,25 +11,16 @@
         </div>
 
         <div class="slds-p-horizontal_medium">
-            <div class="slds-grid slds-gutters_small slds-m-bottom_xx-small search-row">
-                <div class="slds-col slds-grow">
-                    <lightning-input
-                        type="text"
-                        variant="label-hidden"
-                        placeholder="Search records…"
-                        value={searchQuery}
-                        onchange={handleSearchChange}>
-                    </lightning-input>
-                </div>
-            </div>
-
             <div class="records-table slds-scrollable_x">
-                <template lwc:if={filterRecords}>
+                <template lwc:if={records}>
                     <lightning-datatable
                         key-field="Id"
-                        data={filterRecords}
+                        data={records}
                         show-row-number-column
                         hide-checkbox-column
+                        enable-infinite-loading
+                        is-loading={isLoadingDatatable}
+                        onloadmore={handleLoadMoreRecords}
                         columns={columns}>
                     </lightning-datatable>
                 </template>

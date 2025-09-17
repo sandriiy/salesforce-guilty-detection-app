@@ -73,6 +73,16 @@
                                 </criteria>
                             </visibilityRule>
                         </valueListItems>
+                        <valueListItems>
+                            <value>ReviewProcess__c.PreviewFilteredRecords</value>
+                            <visibilityRule>
+                                <criteria>
+                                    <leftValue>{!Record.isFilterCriteriaCompleted__c}</leftValue>
+                                    <operator>EQUAL</operator>
+                                    <rightValue>true</rightValue>
+                                </criteria>
+                            </visibilityRule>
+                        </valueListItems>
                     </valueList>
                 </componentInstanceProperties>
                 <componentInstanceProperties>

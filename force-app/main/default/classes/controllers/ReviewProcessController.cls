@@ -1,4 +1,6 @@
 public with sharing class ReviewProcessController {
+	private static final String COMPONENT_KEY = 'admin';
+
     @AuraEnabled
     public static void saveReviewProcessFilter(Id reviewProcessId, String compiledData) {
         ReviewProcess__c reviewProcess = new ReviewProcess__c(
@@ -48,18 +50,36 @@ public with sharing class ReviewProcessController {
     }
 
 	@AuraEnabled
-	public static LightningDatatableInfo getFilteredRecordsForDatatable(Id reviewProcessId) {
-		ReviewProcess__c reviewProcess = new ReviewProcessSelector().selectById(reviewProcessId);
-		ReviewProcessDataInterpreterService dataInterpreter = new ReviewProcessDataInterpreterService(reviewProcess);
+	public static LightningDatatableInfo getFilteredRecordsForDatatable(Id reviewProcessId, Integer position, Boolean needRefresh) {
+		GuiltyCacheService guiltyCache = new GuiltyCacheService(COMPONENT_KEY, reviewProcessId.toString());
+        if (!guiltyCache.exists() || needRefresh) {
+            ReviewProcess__c reviewProcess = new ReviewProcessSelector().selectById(reviewProcessId);
 
-		List<ReviewFilterCriteriaWrapper.FilterField> fields = dataInterpreter.extractAllFilterFields();
-		LightningDatatableInfo lightningResult = dataInterpreter.buildLightningColumnsAndCursor(fields);
+			ReviewProcessDataInterpreterService dataInterpreter = new ReviewProcessDataInterpreterService(reviewProcess);
+			List<ReviewFilterCriteriaWrapper.FilterField> fields = dataInterpreter.extractAllFilterFields();
+			LightningDatatableInfo lightningResult = dataInterpreter.buildLightningColumnsAndCursor(fields);
+			if (!lightningResult.queryResult.success) {
+				// log
+				throw new AuraHandledException('Something went wrong. Please try again later or contact your System Administrator');
+			} else {
+				lightningResult.totalCount = lightningResult.queryResult?.cursor?.getNumRecords();
 
-		List<SObject> records = Database.query(lightningResult.queryResult.soql);
-		lightningResult.records = records;
-		lightningResult.totalCount = records.size();
+				// We cache it to avoid exceeding Apex Cursor limits (10k per day).
+				guiltyCache.put(lightningResult);
+				lightningResult.records = safeFetch(
+					lightningResult.queryResult.cursor, position, GuiltyConstants.DEFAULT_PAGINATION_COUNT
+				);
 
-		return lightningResult;
+				return lightningResult;
+			}
+        } else {
+            LightningDatatableInfo lightningResult = (LightningDatatableInfo) guiltyCache.get();
+			lightningResult.records = safeFetch(
+				lightningResult.queryResult.cursor, position, GuiltyConstants.DEFAULT_PAGINATION_COUNT
+			);
+
+            return lightningResult;
+        }
 	}
 
     @AuraEnabled(cacheable=true)
@@ -164,5 +184,19 @@ public with sharing class ReviewProcessController {
         }
 
         return null;
+    }
+
+	private static List<SObject> safeFetch(Database.Cursor cursor, Integer fetchPosition, Integer fetchCount) {
+        Integer totalSize = cursor.getNumRecords();
+    
+        if (fetchPosition >= totalSize) {
+            return new List<SObject>();
+        } else {
+            fetchCount = (fetchPosition + fetchCount) > totalSize 
+				? (totalSize - fetchPosition) 
+				: fetchCount;
+
+            return (List<SObject>) cursor.fetch(fetchPosition, fetchCount);
+        }
     }
 }
