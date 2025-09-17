@@ -78,7 +78,7 @@ const showToast = (context, title, message, variant = 'info', mode = 'dismissabl
 };
 
 const isEmpty = (value) => {
-    return value === null || value === undefined || value === '' || (Array.isArray(value) && value.length === 0);
+    return value === null || value === undefined || value === '' || (Array.isArray(value) && value.length === 0 || value === false);
 };
 
 const getFieldTypeConditions = (fieldType) => {
@@ -141,4 +141,14 @@ const extractErrorMessage = (error) => {
     return rawMessage;
 }
 
-export { showToast, extractErrorMessage, isEmpty, getFieldTypeConditions, getFieldTypeForInput, generateId };
+const hashString = (s) => {
+    let h = 2166136261 >>> 0;
+    for (let i = 0; i < s.length; i++) {
+        h ^= s.charCodeAt(i);
+        h = Math.imul(h, 16777619);
+    }
+	
+    return (h >>> 0).toString(36);
+}
+
+export { showToast, extractErrorMessage, isEmpty, getFieldTypeConditions, getFieldTypeForInput, generateId, hashString };

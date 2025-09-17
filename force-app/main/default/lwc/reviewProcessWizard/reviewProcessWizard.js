@@ -2,7 +2,7 @@ import { LightningElement, api, track, wire } from 'lwc';
 import { getRecord } from "lightning/uiRecordApi";
 import { showToast, isEmpty, extractErrorMessage } from 'c/utils';
 
-import reviewProcessRecordPreview from 'c/reviewProcessRecordPreview';
+import reviewProcessRecordsPreview from 'c/reviewProcessRecordsPreview';
 import saveReviewProcessFilter from '@salesforce/apex/ReviewProcessController.saveReviewProcessFilter';
 import saveReviewProcessFields from '@salesforce/apex/ReviewProcessController.saveReviewProcessFields';
 
@@ -11,8 +11,10 @@ import FILTER_CRITERIA from "@salesforce/schema/ReviewProcess__c.FilterCriteria_
 import REVIEW_FIELDS from "@salesforce/schema/ReviewProcess__c.FieldsForReview__c";
 import REVIEW_STATUS from "@salesforce/schema/ReviewProcess__c.Status__c";
 
+import { notifyRecordUpdateAvailable } from 'lightning/uiRecordApi';
 import { refreshApex } from '@salesforce/apex';
 
+const COMPONENT_SESSION_KEY = 'reviewprocesswizard';
 const REVIEW_PROCESS_INDICATOR_STEPS = [
     {
         key: "noFilterCriteria", 
@@ -138,16 +140,21 @@ export default class ReviewProcessWizard extends LightningElement {
     async saveRecordFilterStepData(compiledData) {
         try {
             await saveReviewProcessFilter({ reviewProcessId: this.recordId, compiledData: compiledData });
-            showToast(this, 'Review Process Filtering Successfully Saved', '', 'success');
+			showToast(this, 'Review Process Filtering Successfully Saved', '', 'success');
 
-            const previewResult = await reviewProcessRecordPreview.open({
+			let needRefresh = this.isValidSessionChangeCache(COMPONENT_SESSION_KEY, compiledData);
+			const previewResult = await reviewProcessRecordsPreview.open({
+				reviewProcessId: this.recordId,
                 label: 'Filtered Records Preview',
                 size: 'small',
-                content: 'You\'re viewing a preview of records based on your current setup. This includes only a portion of all available records, feel free to load more fields for deeper analysis.',
+                content: 'You\'re viewing a preview of records based on your current setup. Only fields specified in the filters will be displayed.',
+				isConfigPreview: true,
+				isTotalRecords: true,
+				needRefresh: needRefresh
             });
 
             if (previewResult === 'okay') {
-                await refreshApex(this.wiredRecordResult);
+				await notifyRecordUpdateAvailable([{ recordId: this.recordId }]);
             }
         } catch (error) {
             console.error(error);
@@ -180,6 +187,29 @@ export default class ReviewProcessWizard extends LightningElement {
             );
         }
     }
+
+	isValidSessionChangeCache(key, newValue) {
+		const stored = sessionStorage.getItem(key);
+		if (stored) {
+			try {
+				const parsed = JSON.parse(stored);
+				const { value, timestamp } = parsed;
+
+				// Check expiration (1 hour)
+				const isExpired = Date.now() - timestamp > 3600000;
+				if (!isExpired && value === newValue) {
+					return false;
+				}
+			} catch (e) {}
+		}
+
+		sessionStorage.setItem(
+			key,
+			JSON.stringify({ value: newValue, timestamp: Date.now() })
+		);
+
+		return true;
+	}
 
     get isLoading() {
         return isEmpty(this.currentStep) || isEmpty(this.record) || this.isManualLoading === true;
