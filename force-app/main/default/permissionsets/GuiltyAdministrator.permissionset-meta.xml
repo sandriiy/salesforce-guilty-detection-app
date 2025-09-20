@@ -32,6 +32,11 @@
         <field>ReviewProcess__c.EndDateTime__c</field>
         <readable>true</readable>
     </fieldPermissions>
+	<fieldPermissions>
+        <editable>true</editable>
+        <field>ReviewProcess__c.HasFilterErrors__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
         <field>ReviewProcess__c.FieldsForReview__c</field>

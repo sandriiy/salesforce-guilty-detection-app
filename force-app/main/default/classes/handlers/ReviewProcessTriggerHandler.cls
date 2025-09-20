@@ -10,5 +10,6 @@ public without sharing class ReviewProcessTriggerHandler extends TriggerHandler 
     public override void beforeUpdate() {
         ReviewProcessLifecycleService lifecycleService = new ReviewProcessLifecycleService(newReviewProcessMap.values());
         lifecycleService.handleTransition(oldReviewProcessMap);
+		lifecycleService.handleRecordFiltersChange(oldReviewProcessMap);
     }
 }

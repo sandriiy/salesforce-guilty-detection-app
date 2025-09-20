@@ -124,8 +124,6 @@ export default class ReviewProcessRecordFilter extends LightningElement {
     handleFilterStepSave(event) {
         const isVerifiedData = this.verifyData();
         if (isVerifiedData) {
-            // modal window to verify data
-
             let compiledData = this.compileFinalData();
             this.notifyReviewProcessWizard(compiledData);
         }
