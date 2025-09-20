@@ -1,9 +1,7 @@
 public with sharing class GuiltyAdminController {
-    private static final String COMPONENT_KEY = 'admin';
-
     @AuraEnabled
     public static List<ReviewProcess__c> getReviewProcesses(String status, Integer fetchPosition, Integer fetchCount, Boolean isRefresh) {
-        GuiltyCacheService guiltyCache = new GuiltyCacheService(COMPONENT_KEY, status);
+        GuiltyCacheService guiltyCache = new GuiltyCacheService(GuiltyConstants.GUILTY_PARTITION_ADMIN_KEY, status);
         if (!guiltyCache.exists() || isRefresh) {
             Database.Cursor reviewProcessesCursor = new ReviewProcessSelector().selectCursorWithFeedbacksByStatus(status);
             guiltyCache.put(reviewProcessesCursor);

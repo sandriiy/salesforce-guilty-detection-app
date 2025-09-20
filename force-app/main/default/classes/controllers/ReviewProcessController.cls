@@ -1,6 +1,4 @@
 public with sharing class ReviewProcessController {
-	private static final String COMPONENT_KEY = 'admin';
-
     @AuraEnabled
     public static void saveReviewProcessFilter(Id reviewProcessId, String compiledData) {
         ReviewProcess__c reviewProcess = new ReviewProcess__c(
@@ -46,12 +44,16 @@ public with sharing class ReviewProcessController {
             errors.add('End Date/Time cannot be in the past');
         }
 
+		if (reviewProcess.HasFilterErrors__c) {
+			errors.add('Failed to process filters. Please check your configuration and try again');
+		}
+
         return errors;
     }
 
 	@AuraEnabled
 	public static LightningDatatableInfo getFilteredRecordsForDatatable(Id reviewProcessId, Integer position, Boolean needRefresh) {
-		GuiltyCacheService guiltyCache = new GuiltyCacheService(COMPONENT_KEY, reviewProcessId.toString());
+		GuiltyCacheService guiltyCache = new GuiltyCacheService(GuiltyConstants.GUILTY_PARTITION_ADMIN_KEY, reviewProcessId.toString());
         if (!guiltyCache.exists() || needRefresh) {
             ReviewProcess__c reviewProcess = new ReviewProcessSelector().selectById(reviewProcessId);
 
@@ -107,7 +109,14 @@ public with sharing class ReviewProcessController {
                 'warning',
                 'In the "Details" tab, specify the start and end dates of this review process.'
             );
-        } else {
+        } else if (reviewProcess.HasFilterErrors__c ) {
+			return new ReviewProcessNextStepDTO(
+                'Filters Error',
+                false,
+                'warning',
+                'Please check your filters — an error was detected in the "Config" tab, in the "Define Records Type" step.'
+            );
+		} else {
             return new ReviewProcessNextStepDTO(
                 'Good To Go',
                 true,

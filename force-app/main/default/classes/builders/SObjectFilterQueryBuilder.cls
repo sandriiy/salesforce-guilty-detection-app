@@ -1,6 +1,6 @@
 public inherited sharing class SObjectFilterQueryBuilder {
     private String sobjectName;
-    private List<FilterConditionWrapper> filters = new List<FilterConditionWrapper>();
+    private List<ReviewFilterCriteriaWrapper.FilterField> filters = new List<ReviewFilterCriteriaWrapper.FilterField>();
     private String logic;
     private List<String> selectFields = new List<String>();
     private Integer limitSize;
@@ -17,20 +17,20 @@ public inherited sharing class SObjectFilterQueryBuilder {
     /**
      * Provide the full list of filters.
      */
-    public SObjectFilterQueryBuilder withFilters(List<FilterConditionWrapper> filters) {
+    public SObjectFilterQueryBuilder withFilters(List<ReviewFilterCriteriaWrapper.FilterField> filters) {
         this.filters = filters == null
-            ? new List<FilterConditionWrapper>()
-            : new List<FilterConditionWrapper>(filters);
-		
+            ? new List<ReviewFilterCriteriaWrapper.FilterField>()
+            : new List<ReviewFilterCriteriaWrapper.FilterField>(filters);
+        
         return this;
     }
 
     /**
      * Add a single filter.
      */
-    public SObjectFilterQueryBuilder addFilter(FilterConditionWrapper filter) {
+    public SObjectFilterQueryBuilder addFilter(ReviewFilterCriteriaWrapper.FilterField filter) {
         if (this.filters == null) {
-            this.filters = new List<FilterConditionWrapper>();
+            this.filters = new List<ReviewFilterCriteriaWrapper.FilterField>();
         }
 
         this.filters.add(filter);
@@ -52,7 +52,7 @@ public inherited sharing class SObjectFilterQueryBuilder {
         this.selectFields = fieldApiNames == null
             ? new List<String>()
             : new List<String>(fieldApiNames);
-		
+        
         return this;
     }
 
@@ -118,17 +118,17 @@ public inherited sharing class SObjectFilterQueryBuilder {
             finalFieldSet.add('Id');
         }
 
-		String soql = 'SELECT ' + String.join(new List<String>(finalFieldSet), ', ')
-					+ ' FROM ' + this.sobjectName
-					+ ' WHERE ' + whereClause;
+        String soql = 'SELECT ' + String.join(new List<String>(finalFieldSet), ', ')
+                    + ' FROM ' + this.sobjectName
+                    + ' WHERE ' + whereClause;
 
-		if (!String.isBlank(this.orderByClause)) {
-			soql += ' ORDER BY ' + this.orderByClause;
-		}
+        if (!String.isBlank(this.orderByClause)) {
+            soql += ' ORDER BY ' + this.orderByClause;
+        }
 
-		if (this.limitSize != null && this.limitSize > 0) {
-			soql += ' LIMIT ' + String.valueOf(this.limitSize);
-		}
+        if (this.limitSize != null && this.limitSize > 0) {
+            soql += ' LIMIT ' + String.valueOf(this.limitSize);
+        }
 
         try {
             Database.Cursor cursor = Database.getCursor(soql);
@@ -157,8 +157,9 @@ public inherited sharing class SObjectFilterQueryBuilder {
     private String buildWhereClause(Map<String, Schema.SObjectField> describeFieldMap) {
         Map<Integer, String> expressionByIndex = new Map<Integer, String>();
 
-        for (FilterConditionWrapper filterCondition : this.filters) {
-            if (filterCondition == null) continue;
+        Integer i = 0;
+        for (ReviewFilterCriteriaWrapper.FilterField filterCondition : this.filters) {
+            if (filterCondition == null) { i++; continue; }
 
             if (!describeFieldMap.containsKey(filterCondition.field)) {
                 throw new SObjectFilterQueryException('Invalid field "' + filterCondition.field + '" on ' + this.sobjectName);
@@ -166,7 +167,8 @@ public inherited sharing class SObjectFilterQueryBuilder {
 
             Schema.DescribeFieldResult fieldDescribe = describeFieldMap.get(filterCondition.field).getDescribe();
             String filterExpression = buildFilterExpression(filterCondition, fieldDescribe);
-            expressionByIndex.put(filterCondition.index, '(' + filterExpression + ')');
+            expressionByIndex.put(i, '(' + filterExpression + ')');
+            i++;
         }
 
         String resolvedLogic = this.logic;
@@ -180,9 +182,9 @@ public inherited sharing class SObjectFilterQueryBuilder {
         return resolvedLogic;
     }
 
-    private String buildFilterExpression(FilterConditionWrapper filterCondition, Schema.DescribeFieldResult fieldDescribe) {
+    private String buildFilterExpression(ReviewFilterCriteriaWrapper.FilterField filterCondition, Schema.DescribeFieldResult fieldDescribe) {
         String fieldApiName = filterCondition.field;
-        String conditionName = filterCondition.condition == null ? '' : filterCondition.condition.trim().toLowerCase();
+        String conditionName = filterCondition.selectedCondition == null ? '' : filterCondition.selectedCondition.trim().toLowerCase();
         String rawValue = filterCondition.value;
 
         if (conditionName == 'isnull') {
@@ -214,7 +216,7 @@ public inherited sharing class SObjectFilterQueryBuilder {
             when 'doesnotcontain'   { return 'NOT ' + likeClause(fieldApiName, '%' + fieldLiteral.patternText + '%'); }
             when 'startswith'       { return likeClause(fieldApiName, fieldLiteral.patternText + '%'); }
             when 'endswith'         { return likeClause(fieldApiName, '%' + fieldLiteral.patternText); }
-            when else               { throw new SObjectFilterQueryException('Unsupported condition: ' + filterCondition.condition); }
+            when else               { throw new SObjectFilterQueryException('Unsupported condition: ' + filterCondition.selectedCondition); }
         }
     }
 
