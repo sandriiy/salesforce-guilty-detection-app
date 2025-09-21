@@ -11,8 +11,12 @@ public without sharing class ReviewFeedbackLifecycleService {
     public ReviewFeedback__c createNewReviewFeedback() {
         this.reviewProcess = new ReviewProcessSelector().selectById(reviewProcessId);
         SObject recordToReview = this.findUnreviewedRecord(this.reviewProcess);
-        ReviewFeedback__c reviewFeedback = this.createReviewFeedbackWithItems(recordToReview);
-        return reviewFeedback;
+		if (recordToReview != null) {
+			ReviewFeedback__c reviewFeedback = this.createReviewFeedbackWithItems(recordToReview);
+        	return reviewFeedback;
+		}
+
+		return null;
     }
 
     public void saveDraftReviewFeedback(ReviewFeedbackDTO reviewFeedbackDTO) {
@@ -31,8 +35,43 @@ public without sharing class ReviewFeedbackLifecycleService {
             ReviewFilterCriteriaWrapper.class
         );
 
-        String targetSobject = criteriaWrapper.selectedSObject;
-        Set<String> fieldsToSelect = new Set<String>{ 'Id' };
+		SObjectFilterQueryBuilder.Result criteriaResponse = new SObjectFilterQueryBuilder(criteriaWrapper.selectedSObject)
+			.withFilters(criteriaWrapper.selectedFilters)
+			.withLogic(criteriaWrapper.selectedFilterLogic)
+			.withFields(getReviewFields(reviewProcess))
+			.isApexCursor(false)
+			.run();
+
+		Map<Id, SObject> recordsToReview;
+		try {
+			recordsToReview = new Map<Id, SObject>(Database.query(criteriaResponse.soql));
+		} catch (DmlException ex) {
+			// Log
+			throw new AuraHandledException('Unable to retrieve records. Please contact the System Administrator');
+		}
+
+		List<ReviewFeedback__c> existingReviewFeedback = new ReviewFeedbackSelector().selectWithRecordIdsByReviewProcessId(reviewProcess.Id);
+
+		Set<Id> reviewedIds = new Set<Id>();
+		for (ReviewFeedback__c reviewFeedback : existingReviewFeedback) {
+			if (reviewFeedback.RecordId__c != null) {
+				reviewedIds.add((Id)reviewFeedback.RecordId__c);
+			}
+		}
+
+		// Find the first unreviewed record
+		SObject firstUnreviewedRecord;
+		for (Id recordId : recordsToReview.keySet()) {
+			if (!reviewedIds.contains(recordId)) {
+				return recordsToReview.get(recordId);
+			}
+		}
+        
+        return null;
+    }
+
+	private Set<String> getReviewFields(ReviewProcess__c reviewProcess) {
+		Set<String> fieldsToSelect = new Set<String>{ 'Id' };
         if (!String.isBlank(reviewProcess.FieldsForReview__c)) {
             ReviewSelectedFieldsWrapper fieldsWrapper = (ReviewSelectedFieldsWrapper) JSON.deserialize(
                 reviewProcess.FieldsForReview__c,
@@ -48,16 +87,8 @@ public without sharing class ReviewFeedbackLifecycleService {
             }
         }
 
-        // TODO: TAKE FILTERS INTO ACCOUNT + EXTRACT THIS AWAY
-        String soql =
-            'SELECT ' + String.join(new List<String>(fieldsToSelect), ', ') +
-            ' FROM ' + targetSobject +
-            ' ORDER BY CreatedDate ASC ' +
-            ' LIMIT 1';
-
-        List<SObject> results = Database.query(soql);
-        return results.isEmpty() ? null : results[0];
-    }
+		return fieldsToSelect;
+	}
 
     private void saveReviewFeedbackItems(List<ReviewFeedbackDTO.FeedbackItem> feedbackItems) {
         List<ReviewFeedbackItem__c> reviewFeedbackItems = new List<ReviewFeedbackItem__c>();

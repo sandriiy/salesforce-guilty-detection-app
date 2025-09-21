@@ -5,6 +5,7 @@ public inherited sharing class SObjectFilterQueryBuilder {
     private List<String> selectFields = new List<String>();
     private Integer limitSize;
     private String orderByClause;
+	private Boolean isDatabaseCursor = true;
 
     /**
      * Create a new service for a specific sObject API name (e.g., "Case", "Account").
@@ -56,6 +57,17 @@ public inherited sharing class SObjectFilterQueryBuilder {
         return this;
     }
 
+	/**
+     * Provide the explicit field list to SELECT.
+     */
+    public SObjectFilterQueryBuilder withFields(Set<String> fieldApiNames) {
+        this.selectFields = fieldApiNames == null
+            ? new List<String>()
+            : new List<String>(fieldApiNames);
+        
+        return this;
+    }
+
     /**
      * Add a single field to SELECT.
      */
@@ -73,6 +85,14 @@ public inherited sharing class SObjectFilterQueryBuilder {
      */
     public SObjectFilterQueryBuilder withLimit(Integer limitSize) {
         this.limitSize = limitSize;
+        return this;
+    }
+
+	/**
+     * Optional. Use when Database.Cursor return is not needed
+     */
+    public SObjectFilterQueryBuilder isApexCursor(Boolean isDatabaseCursor) {
+        this.isDatabaseCursor = isDatabaseCursor;
         return this;
     }
 
@@ -131,7 +151,12 @@ public inherited sharing class SObjectFilterQueryBuilder {
         }
 
         try {
-            Database.Cursor cursor = Database.getCursor(soql);
+			Database.Cursor cursor;
+
+			if (this.isDatabaseCursor) {
+				cursor = Database.getCursor(soql);
+			}
+
             return new Result(cursor, soql);
         } catch (Exception ex) {
             return new Result('Invalid query: ' + ex.getMessage(), soql);
