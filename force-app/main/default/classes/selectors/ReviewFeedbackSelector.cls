@@ -16,4 +16,14 @@ public with sharing class ReviewFeedbackSelector {
 
         return reviewFeedback.isEmpty() ? null : reviewFeedback.get(0);
     }
+
+	public List<ReviewFeedback__c> selectWithRecordIdsByReviewProcessId(Id reviewProcessId) {
+        List<ReviewFeedback__c> reviewFeedback = [
+            SELECT Id, Name, RecordId__c, RecordType__c, ReviewProcessId__c
+            FROM ReviewFeedback__c
+            WHERE ReviewProcessId__c = :reviewProcessId AND RecordId__c != null
+        ];
+
+        return reviewFeedback;
+    }
 }

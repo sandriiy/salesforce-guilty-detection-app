@@ -1,6 +1,9 @@
 import { LightningElement, wire, track } from 'lwc';
 import Id from '@salesforce/user/Id';
+
 import { refreshApex } from '@salesforce/apex';
+import { showToast, isEmpty } from 'c/utils';
+
 import FeedbackRecordModal from 'c/reviewerFeedbackRecordModal';
 import getReviewProcesses from '@salesforce/apex/GuiltyReviewerController.getOngoingReviewProcesses';
 import beginNewFeedbackProcess from '@salesforce/apex/GuiltyReviewerController.beginNewFeedbackProcessByReviewId';
@@ -37,23 +40,44 @@ export default class ReviewerReviewProcessWorkspace extends LightningElement {
     }
 
     async handleNewReviewClick(event) {
-        const reviewProcessId = event.currentTarget.dataset.id;
+		let buttonTarget = event.currentTarget;
+        const reviewProcessId = buttonTarget.dataset.id;
 
         this.isLoading = true;
         let reviewFeedback;
         await beginNewFeedbackProcess({ reviewProcessId: reviewProcessId })
             .then(result => {
-                reviewFeedback = result;
+				reviewFeedback = result;
+
+				if (isEmpty(result)) {
+					showToast(
+						this,
+						'There are no more records to review',
+						'All records are either reviewed or currently in review. Just double-check that you don\’t have any pending reviews left',
+						'success'
+					);
+				}
             })
             .catch(error => {
                 console.log(error);
+				showToast(
+					this,
+					'Unable to Retrieve Record For Review',
+					'Please contact your System Administrator or try again later',
+					'error'
+				);
             });
 
-        await FeedbackRecordModal.open({
-            feedbackId: reviewFeedback.Id
-        });
+		if (!isEmpty(reviewFeedback)) {
+			await FeedbackRecordModal.open({
+				feedbackId: reviewFeedback.Id
+			});
 
-		await refreshApex(this.wiredReviewsRef);
+			await refreshApex(this.wiredReviewsRef);
+		} else {
+			buttonTarget.disabled = true;
+		}
+
         this.isLoading = false;
     }
 
