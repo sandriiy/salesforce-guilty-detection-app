@@ -56,6 +56,50 @@ public with sharing class GuiltyAdminController {
         return result;
     }
 
+    @AuraEnabled(cacheable=true)
+    public static ChartAnalyticsContextDTO getChartAnalyticsContext(String baseObjectApiName) {
+        if (String.isBlank(baseObjectApiName)) {
+            throw new AuraHandledException('Base object API name is required.');
+        }
+        return new GuiltyChartAnalyticsService().getContext(baseObjectApiName);
+    }
+
+    @AuraEnabled
+    public static ChartDatasetResponseDTO getChartDataset(String requestJson) {
+        if (String.isBlank(requestJson)) {
+            throw new AuraHandledException('Chart analytics request is required.');
+        }
+        ChartAnalyticsRequestWrapper chartRequest;
+        try {
+            chartRequest = (ChartAnalyticsRequestWrapper) JSON.deserialize(requestJson, ChartAnalyticsRequestWrapper.class);
+        } catch (Exception ex) {
+            throw new AuraHandledException('Invalid request format: ' + ex.getMessage());
+        }
+        return new GuiltyChartAnalyticsService().buildDataset(chartRequest);
+    }
+
+    @AuraEnabled(cacheable=true)
+    public static List<PicklistValueDTO> getAccessibleSObjects() {
+        Set<String> commonStandardObjects = new Set<String>{
+            'Account', 'Contact', 'Lead', 'Opportunity', 'Case', 'User',
+            'Contract', 'Campaign', 'Order', 'Asset', 'Event', 'Task'
+        };
+
+        Map<String, Schema.SObjectType> globalDescribe = Schema.getGlobalDescribe();
+        List<PicklistValueDTO> result = new List<PicklistValueDTO>();
+
+        for (String objectApiName : globalDescribe.keySet()) {
+            if (!objectApiName.endsWith('__c') && !commonStandardObjects.contains(objectApiName)) continue;
+
+            Schema.DescribeSObjectResult objectDescribe = globalDescribe.get(objectApiName).getDescribe();
+            if (!objectDescribe.isAccessible() || !objectDescribe.isQueryable()) continue;
+
+            result.add(new PicklistValueDTO(objectDescribe.getLabel(), objectApiName));
+        }
+
+        return result;
+    }
+
     private static List<ReviewProcess__c> safeFetch(Database.Cursor cursor, Integer fetchPosition, Integer fetchCount) {
         Integer totalSize = cursor.getNumRecords();
     

@@ -1,0 +1,103 @@
+<template>
+    <div class="slds-card slds-p-around_medium">
+        <template lwc:if={isLoadingContext}>
+            <div class="slds-align_absolute-center slds-p-around_medium">
+                <lightning-spinner alternative-text="Loading analytics context" size="small"></lightning-spinner>
+            </div>
+        </template>
+
+        <template lwc:if={hasContextLoadError}>
+            <div class="slds-notify slds-notify_alert slds-alert_error slds-m-bottom_small" role="alert">
+                <span>{contextErrorMessage}</span>
+            </div>
+        </template>
+
+        <template lwc:if={isContextReady}>
+            <div class="slds-grid slds-gutters slds-m-bottom_medium">
+                <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-3">
+                    <lightning-combobox
+                        label="Data Source"
+                        placeholder="Select data source..."
+                        value={selectedPathKey}
+                        options={pathOptions}
+                        onchange={handlePathChange}
+                        disabled={isLoading}>
+                    </lightning-combobox>
+                </div>
+            </div>
+
+            <template lwc:if={hasSelectedPath}>
+                <div class="slds-grid slds-gutters slds-m-bottom_medium">
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
+                        <lightning-combobox
+                            label="Group By"
+                            placeholder="Select field..."
+                            value={selectedGroupByField}
+                            options={groupByFieldOptions}
+                            onchange={handleGroupByChange}
+                            disabled={isLoading}>
+                        </lightning-combobox>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4">
+                        <lightning-combobox
+                            label="Aggregation"
+                            value={aggregationType}
+                            options={aggregationTypeOptions}
+                            onchange={handleAggregationTypeChange}
+                            disabled={isLoading}>
+                        </lightning-combobox>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4">
+                        <lightning-combobox
+                            label="Chart Type"
+                            value={selectedChartType}
+                            options={chartTypeOptions}
+                            onchange={handleChartTypeChange}
+                            disabled={isLoading}>
+                        </lightning-combobox>
+                    </div>
+                </div>
+
+                <template lwc:if={showAggregationField}>
+                    <div class="slds-grid slds-gutters slds-m-bottom_medium">
+                        <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-3">
+                            <lightning-combobox
+                                label="Aggregation Field"
+                                placeholder="Select numeric field..."
+                                value={selectedAggregationField}
+                                options={aggregationFieldOptions}
+                                onchange={handleAggregationFieldChange}
+                                disabled={isLoading}>
+                            </lightning-combobox>
+                        </div>
+                    </div>
+                </template>
+
+                <div class="slds-m-bottom_medium">
+                    <lightning-button
+                        label="Generate Chart"
+                        variant="brand"
+                        onclick={handleGenerateChart}
+                        disabled={isGenerateDisabled}>
+                    </lightning-button>
+                </div>
+            </template>
+        </template>
+
+        <template lwc:if={isLoadingDataset}>
+            <div class="slds-align_absolute-center slds-p-around_medium">
+                <lightning-spinner alternative-text="Loading chart data" size="small"></lightning-spinner>
+            </div>
+        </template>
+
+        <template lwc:if={hasDatasetError}>
+            <div class="slds-notify slds-notify_alert slds-alert_error slds-m-bottom_small" role="alert">
+                <span>{datasetErrorMessage}</span>
+            </div>
+        </template>
+
+        <div class={chartContainerClass}>
+            <canvas class="dynamic-chart-canvas" lwc:dom="manual"></canvas>
+        </div>
+    </div>
+</template>

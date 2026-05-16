@@ -1,0 +1,11 @@
+.chart-container {
+    position: relative;
+    width: 100%;
+    height: 350px;
+    margin-top: 1rem;
+}
+
+.dynamic-chart-canvas {
+    width: 100%;
+    height: 100%;
+}

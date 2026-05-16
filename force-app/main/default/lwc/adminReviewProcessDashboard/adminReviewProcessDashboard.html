@@ -27,9 +27,6 @@
         </div>
 
         <div class="dashboard-container slds-p-around_medium slds-m-top_small">
-            <div class="slds-grid slds-gutters slds-m-bottom_medium">
-                <!-- TODO: ADD FILTERS AND SEARCH FOR A SPECIFIC REVIEW PROCESS -->
-            </div>
             <div class="slds-grid">
                 <div class="slds-col slds-size_1-of-1">
                     <div>
@@ -58,7 +55,26 @@
                     </div>
                 </div>
             </div>
-            
+        </div>
+
+        <div class="slds-card slds-p-around_medium slds-m-top_small">
+            <header class="slds-text-heading_small slds-m-bottom_medium">Review Process Analytics</header>
+            <div class="slds-grid slds-gutters slds-m-bottom_medium">
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
+                    <lightning-combobox
+                        label="Analyze By Object"
+                        placeholder="Select base object..."
+                        value={analyticsBaseObjectApiName}
+                        options={accessibleSObjectOptions}
+                        onchange={handleBaseObjectChange}>
+                    </lightning-combobox>
+                </div>
+            </div>
+            <template lwc:if={analyticsBaseObjectApiName}>
+                <c-dynamic-chart-builder
+                    base-object-api-name={analyticsBaseObjectApiName}>
+                </c-dynamic-chart-builder>
+            </template>
         </div>
     </div>
 </template>

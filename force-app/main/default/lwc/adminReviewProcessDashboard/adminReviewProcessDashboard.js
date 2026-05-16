@@ -4,14 +4,14 @@ import { loadScript } from 'lightning/platformResourceLoader';
 import { showToast, STATUSES_GRAPH_COLOR_MAP } from 'c/utils';
 import getStatusCounts from '@salesforce/apex/GuiltyAdminController.getReviewProcessesStatusCounts';
 import getReviewTotals from '@salesforce/apex/GuiltyAdminController.getReviewTotals';
+import getAccessibleSObjects from '@salesforce/apex/GuiltyAdminController.getAccessibleSObjects';
 
 import chartjs from '@salesforce/resourceUrl/ChartJsLibrary';
 import ChartBuilder from 'c/chartUtils';
 
 const STANDARD_GRAPH = { 
     id: 'status-graph', 
-    title: 'Review Processes By Status', 
-    visible: true
+    title: 'Review Processes By Status'
 };
 
 export default class AdminReviewProcessDashboard extends LightningElement {
@@ -20,19 +20,21 @@ export default class AdminReviewProcessDashboard extends LightningElement {
     totalRecords;
 
     @track customGraphs = [];
+    @track activeGraphIndex = 0;
     @track isChartJsLoaded = false;
+    @track analyticsBaseObjectApiName;
+    @track accessibleSObjectOptions = [];
+
     async renderedCallback() {
         if (!this.isChartJsLoaded) {
             loadScript(this, chartjs)
                 .then(libraryLoadedResult => {
-                    console.log('Chart.JS successfully loaded', window.Chart);
                     return getStatusCounts();
                 })
                 .then(summaryData => {
                     this.resolveStandardGraphs(summaryData);
                 })
                 .catch(error => {
-                    console.log(error);
                     showToast(
                         this,
                         'Unable To Load/Create Default Chart',
@@ -52,22 +54,35 @@ export default class AdminReviewProcessDashboard extends LightningElement {
             this.totalFeedback = data['ReviewFeedbackTotal'];
             this.totalRecords = data['ReviewRecordsTotal'];
         } else if (error) {
-            console.log(error);
             showToast(
                 this,
                 'Unable To Retrieve Summarized Data',
                 'For more information, contact your System Administrator',
                 'error'
             );
-}
+        }
+    }
+
+    @wire(getAccessibleSObjects)
+    wiredAccessibleSObjects({ data, error }) {
+        if (data) {
+            this.accessibleSObjectOptions = data;
+        } else if (error) {
+            showToast(
+                this,
+                'Unable To Load Objects',
+                'For more information, contact your System Administrator',
+                'error'
+            );
+        }
     }
 
     handleDotChange(event) {
-        const index = parseInt(event.target.value, 10);
-        this.graphs = this.graphs.map((g, i) => ({
-            ...g,
-            visible: i === index
-        }));
+        this.activeGraphIndex = parseInt(event.target.value, 10);
+    }
+
+    handleBaseObjectChange(event) {
+        this.analyticsBaseObjectApiName = event.detail.value;
     }
 
     resolveStandardGraphs(data) {
@@ -99,10 +114,9 @@ export default class AdminReviewProcessDashboard extends LightningElement {
     }
 
     get allGraphs() {
-        return [STANDARD_GRAPH, ...this.customGraphs];
-    }
-
-    get activeIndex() {
-        return this.graphs.findIndex(graph => graph.visible);
+        return [STANDARD_GRAPH, ...this.customGraphs].map((g, i) => ({
+            ...g,
+            visible: i === this.activeGraphIndex
+        }));
     }
 }
