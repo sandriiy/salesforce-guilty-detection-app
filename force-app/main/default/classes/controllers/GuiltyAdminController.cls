@@ -56,6 +56,11 @@ public with sharing class GuiltyAdminController {
         return result;
     }
 
+    @AuraEnabled
+    public static GuiltyChartDTOs.DatasetResponse getDynamicChartDataset(GuiltyChartDTOs.DatasetRequest request) {
+        return GuiltyChartAnalyticsService.getChartDataset(request);
+    }
+
     private static List<ReviewProcess__c> safeFetch(Database.Cursor cursor, Integer fetchPosition, Integer fetchCount) {
         Integer totalSize = cursor.getNumRecords();
     

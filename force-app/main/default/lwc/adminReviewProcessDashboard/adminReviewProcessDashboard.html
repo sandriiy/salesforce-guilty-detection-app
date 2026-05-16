@@ -28,7 +28,45 @@
 
         <div class="dashboard-container slds-p-around_medium slds-m-top_small">
             <div class="slds-grid slds-gutters slds-m-bottom_medium">
-                <!-- TODO: ADD FILTERS AND SEARCH FOR A SPECIFIC REVIEW PROCESS -->
+                <div class="slds-col slds-size_1-of-5">
+                    <lightning-combobox
+                        name="baseObjectApiName"
+                        label="Base Object (Polymorphic Context)"
+                        value={chartRequest.baseObjectApiName}
+                        options={baseObjectOptions}
+                        onchange={handleChartParamsChange}
+                    ></lightning-combobox>
+                </div>
+                <div class="slds-col slds-size_1-of-5">
+                    <lightning-combobox
+                        name="sourceObjectApiName"
+                        label="Source Data Object"
+                        value={chartRequest.sourceObjectApiName}
+                        options={objectOptions}
+                        onchange={handleChartParamsChange}
+                    ></lightning-combobox>
+                </div>
+                <div class="slds-col slds-size_1-of-5">
+                    <lightning-combobox
+                        name="groupByFieldApiName"
+                        label="Group By Field"
+                        value={chartRequest.groupByFieldApiName}
+                        options={fieldOptions}
+                        onchange={handleChartParamsChange}
+                    ></lightning-combobox>
+                </div>
+                <div class="slds-col slds-size_1-of-5">
+                    <lightning-combobox
+                        name="chartType"
+                        label="Chart Type"
+                        value={chartRequest.chartType}
+                        options={chartTypeOptions}
+                        onchange={handleChartParamsChange}
+                    ></lightning-combobox>
+                </div>
+                <div class="slds-col slds-size_1-of-5 slds-p-top_large">
+                    <lightning-button variant="brand" label="Add Chart" onclick={handleAddCustomChart}></lightning-button>
+                </div>
             </div>
             <div class="slds-grid">
                 <div class="slds-col slds-size_1-of-1">
