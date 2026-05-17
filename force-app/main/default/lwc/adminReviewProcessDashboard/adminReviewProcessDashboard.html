@@ -1,64 +1,375 @@
 <template>
-    <div class="slds-p-around_small">
+    <div class="dashboard-shell slds-p-around_small">
         <div class="slds-grid slds-wrap slds-gutters">
-            <!-- Total Reviews -->
             <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
-                <div class="slds-card slds-p-around_medium slds-text-align_center">
-                    <header class="slds-text-title_caps slds-m-bottom_x-small">Total Reviews</header>
+                <div class="metric-card slds-p-around_medium slds-text-align_center">
+                    <header class="metric-card__label slds-text-title_caps slds-m-bottom_x-small">Total Reviews</header>
                     <div class="slds-text-heading_large">{totalReviews}</div>
                 </div>
             </div>
 
-            <!-- Total Feedback -->
             <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
-                <div class="slds-card slds-p-around_medium slds-text-align_center">
-                    <header class="slds-text-title_caps slds-m-bottom_x-small">Total Feedback</header>
+                <div class="metric-card slds-p-around_medium slds-text-align_center">
+                    <header class="metric-card__label slds-text-title_caps slds-m-bottom_x-small">Total Feedback</header>
                     <div class="slds-text-heading_large">{totalFeedback}</div>
                 </div>
             </div>
 
-            <!-- Total Records -->
             <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
-                <div class="slds-card slds-p-around_medium slds-text-align_center">
-                    <header class="slds-text-title_caps slds-m-bottom_x-small">Total Records</header>
+                <div class="metric-card slds-p-around_medium slds-text-align_center">
+                    <header class="metric-card__label slds-text-title_caps slds-m-bottom_x-small">Total Records</header>
                     <div class="slds-text-heading_large">{totalRecords}</div>
                 </div>
             </div>
         </div>
 
-        <div class="dashboard-container slds-p-around_medium slds-m-top_small">
-            <div class="slds-grid slds-gutters slds-m-bottom_medium">
-                <!-- TODO: ADD FILTERS AND SEARCH FOR A SPECIFIC REVIEW PROCESS -->
+        <lightning-card title="Review Process Status" class="slds-m-top_medium">
+            <div class="chart-panel slds-p-horizontal_medium slds-p-bottom_medium">
+                <div class="chart-stage">
+                    <canvas data-id="status-graph" class="chart-canvas" lwc:dom="manual"></canvas>
+                </div>
             </div>
-            <div class="slds-grid">
-                <div class="slds-col slds-size_1-of-1">
-                    <div>
-                        <template for:each={allGraphs} for:item="graph" for:index="index">
-                            <div lwc:if={graph.visible} key={graph.id} class="graph-container slds-box slds-theme_shade slds-m-bottom_medium">
-                                <canvas data-id={graph.id} class="chart-canvas" lwc:dom="manual"></canvas>
+        </lightning-card>
+
+        <lightning-card title="Analytics Dashboard" class="slds-m-top_medium">
+            <template lwc:if={isAnalyticsBusy}>
+                <lightning-spinner alternative-text="Loading analytics"></lightning-spinner>
+            </template>
+
+            <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+                <div class="controls-grid">
+                    <lightning-combobox
+                        data-id="baseObject"
+                        label="Base Object"
+                        value={selectedBaseObjectApiName}
+                        options={baseObjectOptions}
+                        onchange={handleBaseObjectChange}
+                        disabled={isAnalyticsBusy}>
+                    </lightning-combobox>
+
+                    <lightning-combobox
+                        data-id="relationshipPath"
+                        label="Dataset Source"
+                        value={selectedRelationshipPath}
+                        options={relationshipPathOptions}
+                        onchange={handleRelationshipPathChange}
+                        disabled={isAnalyticsBusy}>
+                    </lightning-combobox>
+
+                    <lightning-combobox
+                        data-id="groupByField"
+                        label="Group By"
+                        value={selectedGroupByFieldApiName}
+                        options={groupByOptions}
+                        onchange={handleGroupByFieldChange}
+                        disabled={isAnalyticsBusy}>
+                    </lightning-combobox>
+
+                    <lightning-combobox
+                        data-id="aggregationType"
+                        label="Aggregation"
+                        value={selectedAggregationType}
+                        options={aggregationTypeOptions}
+                        onchange={handleAggregationTypeChange}
+                        disabled={isAnalyticsBusy}>
+                    </lightning-combobox>
+
+                    <template lwc:if={shouldShowAggregationField}>
+                        <lightning-combobox
+                            data-id="aggregationField"
+                            label="Aggregation Field"
+                            value={selectedAggregationFieldApiName}
+                            options={aggregationFieldOptions}
+                            onchange={handleAggregationFieldChange}
+                            disabled={isAnalyticsBusy}>
+                        </lightning-combobox>
+                    </template>
+
+                    <lightning-combobox
+                        data-id="chartType"
+                        label="Chart Type"
+                        value={selectedChartType}
+                        options={chartTypeOptions}
+                        onchange={handleChartTypeChange}
+                        disabled={isAnalyticsBusy}>
+                    </lightning-combobox>
+
+                    <lightning-input
+                        data-id="resultLimit"
+                        type="number"
+                        label="Max Results"
+                        value={resultLimit}
+                        min="1"
+                        max="25"
+                        onchange={handleResultLimitChange}
+                        disabled={isAnalyticsBusy}>
+                    </lightning-input>
+                </div>
+
+                <template lwc:if={selectedRelationshipDetails}>
+                    <div class="context-banner slds-m-top_medium">
+                        <div class="slds-grid slds-wrap slds-grid_vertical-align-center slds-gutters_small">
+                            <div class="slds-col slds-size_1-of-1 slds-large-size_2-of-3">
+                                <p class="slds-text-title_bold">{selectedRelationshipDetails.label}</p>
+                                <p class="context-banner__text">{selectedRelationshipDetails.description}</p>
                             </div>
+                            <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3 badge-group">
+                                <lightning-badge label={selectedRelationshipTypeLabel}></lightning-badge>
+                                <lightning-badge label={selectedSourceObjectLabel}></lightning-badge>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+
+                <div class="filter-grid slds-m-top_medium">
+                    <section class="filter-section">
+                        <div class="filter-section__header">
+                            <div>
+                                <h3 class="slds-text-heading_small">Base Record Filters</h3>
+                                <p class="filter-section__description">Limit the base records that drive the selected relationship path.</p>
+                            </div>
+                            <lightning-button
+                                label="Add Filter"
+                                title="Add Base Record Filter"
+                                onclick={handleAddFilter}
+                                data-filter-kind="base"
+                                disabled={isAnalyticsBusy}>
+                            </lightning-button>
+                        </div>
+
+                        <template lwc:if={hasBaseFilters}>
+                            <template for:each={baseFilters} for:item="filter" for:index="index">
+                                <div key={filter.id} class="filter-row">
+                                    <div class="filter-row__grid">
+                                        <lightning-combobox
+                                            label="Field"
+                                            value={filter.field}
+                                            options={baseFilterFieldOptions}
+                                            onchange={handleFilterFieldChange}
+                                            data-filter-kind="base"
+                                            data-filter-index={index}
+                                            disabled={isAnalyticsBusy}>
+                                        </lightning-combobox>
+
+                                        <lightning-combobox
+                                            label="Condition"
+                                            value={filter.selectedCondition}
+                                            options={filter.conditions}
+                                            onchange={handleFilterConditionChange}
+                                            data-filter-kind="base"
+                                            data-filter-index={index}
+                                            disabled={filter.isDisabledConditions}>
+                                        </lightning-combobox>
+
+                                        <template lwc:if={filter.isPicklist}>
+                                            <lightning-combobox
+                                                label="Value"
+                                                value={filter.value}
+                                                options={filter.options}
+                                                onchange={handleFilterValueChange}
+                                                data-filter-kind="base"
+                                                data-filter-index={index}
+                                                disabled={filter.isDisabledValue}>
+                                            </lightning-combobox>
+                                        </template>
+                                        <template lwc:elseif={filter.isLookup}>
+                                            <lightning-record-picker
+                                                label="Value"
+                                                value={filter.value}
+                                                object-api-name={filter.lookupTo}
+                                                onchange={handleFilterValueChange}
+                                                data-filter-kind="base"
+                                                data-filter-index={index}
+                                                disabled={filter.isDisabledValue}>
+                                            </lightning-record-picker>
+                                        </template>
+                                        <template lwc:else>
+                                            <lightning-input
+                                                label="Value"
+                                                type={filter.type}
+                                                value={filter.value}
+                                                onchange={handleFilterValueChange}
+                                                data-filter-kind="base"
+                                                data-filter-index={index}
+                                                disabled={filter.isDisabledValue}>
+                                            </lightning-input>
+                                        </template>
+                                    </div>
+
+                                    <div class="filter-row__footer">
+                                        <span class="filter-index">{index}</span>
+                                        <lightning-button
+                                            label="Remove"
+                                            variant="destructive-text"
+                                            onclick={handleRemoveFilter}
+                                            data-filter-kind="base"
+                                            data-filter-index={index}
+                                            disabled={disableBaseFilterRemoval}>
+                                        </lightning-button>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <lightning-input
+                                data-logic-kind="base"
+                                type="text"
+                                label="Base Filter Logic"
+                                value={baseFilterLogic}
+                                onchange={handleFilterLogicChange}
+                                onblur={handleFilterLogicValidation}
+                                disabled={isAnalyticsBusy}>
+                            </lightning-input>
+                        </template>
+                        <template lwc:else>
+                            <div class="empty-filter-state">Analytics currently evaluates all accessible base records for the selected object.</div>
+                        </template>
+                    </section>
+
+                    <section class="filter-section">
+                        <div class="filter-section__header">
+                            <div>
+                                <h3 class="slds-text-heading_small">Dataset Filters</h3>
+                                <p class="filter-section__description">Refine the related records that feed the current chart dataset.</p>
+                            </div>
+                            <lightning-button
+                                label="Add Filter"
+                                title="Add Dataset Filter"
+                                onclick={handleAddFilter}
+                                data-filter-kind="dataset"
+                                disabled={isAnalyticsBusy}>
+                            </lightning-button>
+                        </div>
+
+                        <template lwc:if={hasDatasetFilters}>
+                            <template for:each={datasetFilters} for:item="filter" for:index="index">
+                                <div key={filter.id} class="filter-row">
+                                    <div class="filter-row__grid">
+                                        <lightning-combobox
+                                            label="Field"
+                                            value={filter.field}
+                                            options={datasetFilterFieldOptions}
+                                            onchange={handleFilterFieldChange}
+                                            data-filter-kind="dataset"
+                                            data-filter-index={index}
+                                            disabled={isAnalyticsBusy}>
+                                        </lightning-combobox>
+
+                                        <lightning-combobox
+                                            label="Condition"
+                                            value={filter.selectedCondition}
+                                            options={filter.conditions}
+                                            onchange={handleFilterConditionChange}
+                                            data-filter-kind="dataset"
+                                            data-filter-index={index}
+                                            disabled={filter.isDisabledConditions}>
+                                        </lightning-combobox>
+
+                                        <template lwc:if={filter.isPicklist}>
+                                            <lightning-combobox
+                                                label="Value"
+                                                value={filter.value}
+                                                options={filter.options}
+                                                onchange={handleFilterValueChange}
+                                                data-filter-kind="dataset"
+                                                data-filter-index={index}
+                                                disabled={filter.isDisabledValue}>
+                                            </lightning-combobox>
+                                        </template>
+                                        <template lwc:elseif={filter.isLookup}>
+                                            <lightning-record-picker
+                                                label="Value"
+                                                value={filter.value}
+                                                object-api-name={filter.lookupTo}
+                                                onchange={handleFilterValueChange}
+                                                data-filter-kind="dataset"
+                                                data-filter-index={index}
+                                                disabled={filter.isDisabledValue}>
+                                            </lightning-record-picker>
+                                        </template>
+                                        <template lwc:else>
+                                            <lightning-input
+                                                label="Value"
+                                                type={filter.type}
+                                                value={filter.value}
+                                                onchange={handleFilterValueChange}
+                                                data-filter-kind="dataset"
+                                                data-filter-index={index}
+                                                disabled={filter.isDisabledValue}>
+                                            </lightning-input>
+                                        </template>
+                                    </div>
+
+                                    <div class="filter-row__footer">
+                                        <span class="filter-index">{index}</span>
+                                        <lightning-button
+                                            label="Remove"
+                                            variant="destructive-text"
+                                            onclick={handleRemoveFilter}
+                                            data-filter-kind="dataset"
+                                            data-filter-index={index}
+                                            disabled={disableDatasetFilterRemoval}>
+                                        </lightning-button>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <lightning-input
+                                data-logic-kind="dataset"
+                                type="text"
+                                label="Dataset Filter Logic"
+                                value={datasetFilterLogic}
+                                onchange={handleFilterLogicChange}
+                                onblur={handleFilterLogicValidation}
+                                disabled={isAnalyticsBusy}>
+                            </lightning-input>
+                        </template>
+                        <template lwc:else>
+                            <div class="empty-filter-state">No related-record filters are applied, so the dataset uses every accessible record on the selected source object.</div>
+                        </template>
+                    </section>
+                </div>
+
+                <div class="actions-row slds-m-top_medium">
+                    <lightning-button
+                        label="Clear Filters"
+                        variant="neutral"
+                        onclick={handleClearFilters}
+                        disabled={isAnalyticsBusy}>
+                    </lightning-button>
+                    <lightning-button
+                        class="slds-m-left_small"
+                        label="Apply Analytics"
+                        variant="brand"
+                        onclick={handleRefreshClick}
+                        disabled={disableApplyButton}>
+                    </lightning-button>
+                </div>
+
+                <template lwc:if={hasAnalyticsWarnings}>
+                    <div class="warning-banner slds-m-top_medium">
+                        <template for:each={analyticsWarnings} for:item="warning">
+                            <p key={warning}>{warning}</p>
                         </template>
                     </div>
+                </template>
 
-                    <div class="slds-grid slds-grid_align-center carousel-nav">
-                        <template for:each={allGraphs} for:item="graph" for:index="index">
-                            <div key={graph.id} class="dot-wrapper">
-                                <input
-                                    title={graph.title}
-                                    type="radio"
-                                    name="graph-nav"
-                                    id={graph.id}
-                                    value={index}
-                                    checked={graph.visible}
-                                    onchange={handleDotChange}
-                                    class="carousel-dot"/>
-                                <label for={graph.id}></label>
-                            </div>
-                        </template>
+                <template lwc:if={hasAnalyticsErrorMessage}>
+                    <div class="message-banner message-banner_error slds-m-top_medium">{analyticsErrorMessage}</div>
+                </template>
+                <template lwc:elseif={hasAnalyticsResponseMessage}>
+                    <div class="message-banner slds-m-top_medium">{analyticsResponseMessage}</div>
+                </template>
+
+                <template lwc:if={hasAnalyticsSummary}>
+                    <p class="analytics-summary slds-m-top_medium">{analyticsSummary}</p>
+                </template>
+
+                <div class="chart-panel slds-m-top_medium">
+                    <div class="chart-stage chart-stage_large">
+                        <canvas data-id="analytics-graph" class="chart-canvas chart-canvas_large" lwc:dom="manual"></canvas>
                     </div>
                 </div>
             </div>
-            
-        </div>
+        </lightning-card>
     </div>
 </template>

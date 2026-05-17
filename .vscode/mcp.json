@@ -1,0 +1,12 @@
+{
+  "servers": {
+    "Salesforce DX": {
+      "command": "npx",
+      "args": ["-y", "@salesforce/mcp",
+              "--orgs", "playground-6",
+              "--toolsets", "all",
+              "--tools", "run_apex_test",
+              "--allow-non-ga-tools"]
+    }
+  }
+}

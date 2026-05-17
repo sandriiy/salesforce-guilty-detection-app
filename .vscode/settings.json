@@ -9,5 +9,6 @@
     "plaintext": false,
     "markdown": false,
     "scminput": false
-  }
+},
+"xml.preferences.showSchemaDocumentationType": "none"
 }

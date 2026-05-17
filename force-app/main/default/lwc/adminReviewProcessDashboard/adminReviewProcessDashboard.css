@@ -1,59 +1,178 @@
-.dashboard-container {
-    height: 100%;
+.dashboard-shell {
+    min-height: 100%;
 }
 
-.left-panel {
-    min-width: 200px;
+.metric-card {
+    border: 1px solid #dde2e8;
+    border-radius: 0.75rem;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    box-shadow: 0 8px 24px rgb(15 23 42 / 0.06);
 }
 
-.separator {
-    width: 1px;
-    background-color: #d8dde6;
+.metric-card__label {
+    color: #5f6b7a;
 }
 
-.right-panel {
-    flex-grow: 1;
+.controls-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    gap: 1rem;
 }
 
-.graph-container {
+.context-banner {
+    border: 1px solid #d8e6f4;
+    border-radius: 0.75rem;
+    background: linear-gradient(135deg, #f7fbff 0%, #eef4fb 100%);
+    padding: 1rem;
+}
+
+.context-banner__text {
+    color: #3e3e3c;
+    line-height: 1.5;
+}
+
+.badge-group {
     display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}
+
+.filter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+    gap: 1rem;
+}
+
+.filter-section {
+    border: 1px solid #dde2e8;
+    border-radius: 0.75rem;
+    background-color: #ffffff;
+    padding: 1rem;
+}
+
+.filter-section__header {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.filter-section__description {
+    color: #5f6b7a;
+    margin-top: 0.25rem;
+}
+
+.filter-row {
+    border: 1px solid #e5ebf1;
+    border-radius: 0.75rem;
+    background: #fbfcfd;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.filter-row__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+    gap: 0.75rem;
+}
+
+.filter-row__footer {
+    display: flex;
+    justify-content: space-between;
     align-items: center;
+    margin-top: 0.75rem;
+}
+
+.filter-index {
+    align-items: center;
+    background-color: #0b6fb8;
+    border-radius: 999px;
+    color: #ffffff;
+    display: inline-flex;
+    font-size: 0.75rem;
+    font-weight: 700;
+    height: 1.5rem;
     justify-content: center;
+    min-width: 1.5rem;
+}
+
+.empty-filter-state {
+    align-items: center;
+    background: linear-gradient(135deg, #f7fbff 0%, #f8fafc 100%);
+    border: 1px dashed #c6d4e2;
+    border-radius: 0.75rem;
+    color: #52606d;
+    display: flex;
+    line-height: 1.5;
+    min-height: 7rem;
+    padding: 1rem;
+}
+
+.actions-row {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.warning-banner,
+.message-banner {
+    border-radius: 0.75rem;
+    line-height: 1.5;
+    padding: 0.875rem 1rem;
+}
+
+.warning-banner {
+    background-color: #fff8e6;
+    border: 1px solid #f9cf85;
+    color: #8a5100;
+}
+
+.message-banner {
+    background-color: #f3f3f3;
+    border: 1px solid #dddbda;
+    color: #2e2e2e;
+}
+
+.message-banner_error {
+    background-color: #fef1ee;
+    border-color: #f3b8ae;
+    color: #8c2f1b;
+}
+
+.analytics-summary {
+    color: #3e3e3c;
+}
+
+.chart-panel {
+    position: relative;
+}
+
+.chart-stage {
+    min-height: 20rem;
     position: relative;
     width: 100%;
 }
 
+.chart-stage_large {
+    min-height: 24rem;
+}
+
 .chart-canvas {
-    width: 300px;
-    height: 300px;
+    height: 20rem;
+    width: 100%;
 }
 
-.carousel-nav {
-    gap: 0.75rem;
+.chart-canvas_large {
+    height: 24rem;
 }
 
-.dot-wrapper {
-    position: relative;
-}
+@media (max-width: 48rem) {
+    .badge-group {
+        justify-content: flex-start;
+    }
 
-.carousel-dot {
-    opacity: 0;
-    width: 1rem;
-    height: 1rem;
-    position: absolute;
-    cursor: pointer;
-}
-
-.carousel-dot + label {
-    width: 0.75rem;
-    height: 0.75rem;
-    border-radius: 50%;
-    display: inline-block;
-    background-color: #d8dde6;
-    transition: background-color 0.3s ease;
-    cursor: pointer;
-}
-
-.carousel-dot:checked + label {
-    background-color: #1589ee; /* Salesforce blue */
+    .actions-row {
+        justify-content: stretch;
+    }
 }

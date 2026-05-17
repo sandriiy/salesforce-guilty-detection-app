@@ -1,4 +1,48 @@
 public with sharing class GuiltyAdminController {
+    @AuraEnabled(cacheable=true)
+    public static List<PicklistValueDTO> getAccessibleSObjects() {
+        try {
+            return new GuiltyChartMetadataService().getAccessibleSObjects();
+        } catch (AuraHandledException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new AuraHandledException(ex.getMessage());
+        }
+    }
+
+    @AuraEnabled(cacheable=true)
+    public static ChartAnalyticsContextDTO getChartAnalyticsContext(String requestJson) {
+        try {
+            return new GuiltyChartAnalyticsService().getChartAnalyticsContext(parseChartAnalyticsRequest(requestJson));
+        } catch (AuraHandledException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new AuraHandledException(ex.getMessage());
+        }
+    }
+
+    @AuraEnabled
+    public static ChartDatasetResponseDTO getChartDataset(String requestJson) {
+        try {
+            return new GuiltyChartAnalyticsService().getChartDataset(parseChartAnalyticsRequest(requestJson));
+        } catch (AuraHandledException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new AuraHandledException(ex.getMessage());
+        }
+    }
+
+    @AuraEnabled(cacheable=true)
+    public static List<PicklistValueDTO> getChartFieldPicklistValues(String sObjectName, String fieldName) {
+        try {
+            return new GuiltyChartMetadataService().getPicklistValues(sObjectName, fieldName);
+        } catch (AuraHandledException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new AuraHandledException(ex.getMessage());
+        }
+    }
+
     @AuraEnabled
     public static List<ReviewProcess__c> getReviewProcesses(String status, Integer fetchPosition, Integer fetchCount, Boolean isRefresh) {
         GuiltyCacheService guiltyCache = new GuiltyCacheService(GuiltyConstants.GUILTY_PARTITION_ADMIN_KEY, status);
@@ -65,5 +109,13 @@ public with sharing class GuiltyAdminController {
             fetchCount = (fetchPosition + fetchCount) > totalSize ? totalSize : fetchCount;
             return (List<ReviewProcess__c>) cursor.fetch(fetchPosition, fetchCount);
         }
+    }
+
+    private static ChartAnalyticsRequestWrapper parseChartAnalyticsRequest(String requestJson) {
+        if (String.isBlank(requestJson)) {
+            return new ChartAnalyticsRequestWrapper();
+        }
+
+        return (ChartAnalyticsRequestWrapper) JSON.deserialize(requestJson, ChartAnalyticsRequestWrapper.class);
     }
 }
